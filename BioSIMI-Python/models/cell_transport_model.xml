@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
-  <model id="shared_subsystems__mwcb8c8bc7_2610_4b53_8bd8_1f0766ab430e_SS1_mwed3bf097_6c24_4aff_814a_4781890e4ead_SS2_IPTG_reservoir_SS3_IPTG_membrane_" substanceUnits="count" timeUnits="second" extentUnits="mole">
+  <model id="combined_subsystems__mwcb8c8bc7_2610_4b53_8bd8_1f0766ab430e_SS1_mwed3bf097_6c24_4aff_814a_4781890e4ead_SS2_IPTG_reservoir_SS3_IPTG_membrane_" substanceUnits="count" timeUnits="second" extentUnits="mole">
     <listOfUnitDefinitions>
       <unitDefinition id="volume">
         <listOfUnits>
@@ -33,15 +33,7 @@
       <compartment id="cell_external" name="cell_external" size="1" units="litre" constant="true"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="mw3c367a17_7386_470c_8c72_954a48def552_SS1" name="RNAP" compartment="cell_internal" initialAmount="100.000066666711" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mw27aa16fc_b76d_46c2_b301_0456b7e3aace_SS1" name="Ribo" compartment="cell_internal" initialAmount="30.0000200000133" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mw8db70522_81fd_468e_bfee_2b7b2106514e_SS1" name="RecBCD" compartment="cell_internal" initialAmount="5.00000333333556" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mw288eb330_bc2f_470f_9628_e990cb2252e5_SS1" name="RNase" compartment="cell_internal" initialAmount="100.000066666711" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mw34fb2519_79b1_4f10_8668_6410726988c5_SS1" name="AGTP" compartment="cell_internal" initialAmount="3180048.20076943" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mw4f8d0806_0366_43d5_8a2a_a05ee3287512_SS1" name="CUTP" compartment="cell_internal" initialAmount="1908028.92046166" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mw715c6bbe_f050_4257_8bc2_159625dc5aa5_SS1" name="AA" compartment="cell_internal" initialAmount="31800482.0076943" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mw20c9d2b7_2d30_489e_82d1_e71648158436_SS1" name="protein alHL" compartment="cell_internal" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mw8581196a_7c77_4da8_879e_f2c6f24b1932_SS1" name="protein alHL*" compartment="cell_internal" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mw3df01083_618d_4509_9811_8b63adf5cb42_SS1" name="RNA utr1--alHL" compartment="cell_internal" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mwdad3b651_3698_4347_a3af_13c2fd1cd4eb_SS1" name="Ribo:RNA utr1--alHL" compartment="cell_internal" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mw27bf35db_2b1d_439b_a0c4_81972bf226ef_SS1" name="DNA pOR1OR2--utr1--alHL" compartment="cell_internal" initialAmount="1.00000066666711" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
@@ -58,16 +50,14 @@
       <species id="mwbd8bbca4_ad12_4dd6_80fc_656686d30456_SS1" name="AA:2AGTP:Ribo:RNA utr1--alHL:RNase" compartment="cell_internal" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mw5453f37e_770a_422a_ba2f_43c5372ca7be_SS1" name="term_Ribo:RNA utr1--alHL:RNase" compartment="cell_internal" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mwe1a34348_ddac_4a4e_be5b_0895f8905865_SS1" name="AA:Ribo:RNA utr1--alHL:RNase" compartment="cell_internal" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mwbbb6129b_1e4f_4f45_96c0_f3b1fbebdb22_SS1" name="AGTP_USED" compartment="cell_internal" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mw88609092_a820_4312_9f44_7089240fc041_SS2" name="RNAP" compartment="cell_internal" initialAmount="100.000066666711" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mwe54945ce_9d19_4055_b186_48aad8d539a7_SS2" name="Ribo" compartment="cell_internal" initialAmount="30.0000200000133" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mw0f1ec48a_feed_42c2_a733_d24e3a73c80c_SS2" name="RecBCD" compartment="cell_internal" initialAmount="5.00000333333556" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mw5a769204_a049_475d_8d40_b3980a459584_SS2" name="RNase" compartment="cell_internal" initialAmount="100.000066666711" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mw4fb63e25_555b_4449_82e9_57273897e481_SS2" name="AGTP" compartment="cell_internal" initialAmount="3180048.20076943" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mwfc2523f4_818e_4cfc_8a78_dc586dd37d07_SS2" name="CUTP" compartment="cell_internal" initialAmount="1908028.92046166" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mw23834843_3708_4b86_abd8_09c25561cb03_SS2" name="AA" compartment="cell_internal" initialAmount="31800482.0076943" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="RNAP_combined" name="RNAP" compartment="cell_internal" initialAmount="100.000066666711" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="Ribo_combined" name="Ribo" compartment="cell_internal" initialAmount="30.0000200000133" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="RecBCD_combined" name="RecBCD" compartment="cell_internal" initialAmount="5.00000333333556" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="RNase_combined" name="RNase" compartment="cell_internal" initialAmount="100.000066666711" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="AGTP_combined" name="AGTP" compartment="cell_internal" initialAmount="3180048.20076943" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="CUTP_combined" name="CUTP" compartment="cell_internal" initialAmount="1908028.92046166" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="AA_combined" name="AA" compartment="cell_internal" initialAmount="31800482.0076943" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mweb04477f_13a4_4d28_8518_06b1c5bae4de_SS2" name="protein lacI" compartment="cell_internal" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mw28f62bd1_3a2b_45ba_be22_53e2eb1a9509_SS2" name="IPTG" compartment="cell_internal" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mw609aa47a_fc0e_418c_a186_aa3a658fb203_SS2" name="protein lacIdimer" compartment="cell_internal" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mwc00961a6_47d1_4f5a_9c49_00fb0d02cd8a_SS2" name="protein lacItetramer" compartment="cell_internal" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mwcbd6bcc3_2c61_4e12_a6f7_e1ac7bc57188_SS2" name="RNA utr1--lacI" compartment="cell_internal" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
@@ -106,11 +96,10 @@
       <species id="mw88722339_572e_456f_85da_875cfc4e92bc_SS2" name="AA:2AGTP:Ribo:RNA utr1--deGFP:RNase" compartment="cell_internal" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mw6b40acd5_0395_4c2b_a5d8_eae734923797_SS2" name="term_Ribo:RNA utr1--deGFP:RNase" compartment="cell_internal" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mwa029c0f1_d85f_44ba_a505_84310ebae4b0_SS2" name="AA:Ribo:RNA utr1--deGFP:RNase" compartment="cell_internal" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mw2c794e9f_5551_4a06_b56f_73cf74bedc6d_SS2" name="AGTP_USED" compartment="cell_internal" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="IPTG_SS3" name="IPTG" compartment="cell_external" initialAmount="100000" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="IPTG_" name="IPTG" compartment="cell_external" initialAmount="0" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="IPTG_1_" name="IPTG" compartment="cell_internal" initialAmount="0" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="xxprotein_alHL_" name="protein alHL*" compartment="cell_internal" initialAmount="0" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="AGTP_USED_combined" name="AGTP_USED" compartment="cell_internal" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="IPTG_combined" name="IPTG" compartment="cell_external" initialAmount="0" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="IPTG_combined" name="IPTG" compartment="cell_internal" initialAmount="0" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="xxprotein_alHL_combined" name="protein alHL*" compartment="cell_internal" initialAmount="0" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="xxIPTG_protein_alHL_" name="IPTG:protein alHL*" compartment="cell_internal" initialAmount="0" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
     </listOfSpecies>
     <listOfParameters>
@@ -126,7 +115,7 @@
           <speciesReference species="mw20c9d2b7_2d30_489e_82d1_e71648158436_SS1" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw8581196a_7c77_4da8_879e_f2c6f24b1932_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="xxprotein_alHL_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -144,7 +133,7 @@
       <reaction id="mwd7ab1eef_1416_40d7_a256_da7b194a4b64_SS1" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw3df01083_618d_4509_9811_8b63adf5cb42_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw27aa16fc_b76d_46c2_b301_0456b7e3aace_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="Ribo_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mwdad3b651_3698_4347_a3af_13c2fd1cd4eb_SS1" stoichiometry="1" constant="true"/>
@@ -157,7 +146,7 @@
                 <times/>
                 <ci> mw3830ada9_8c1f_4408_8792_b352b9545092 </ci>
                 <ci> mw3df01083_618d_4509_9811_8b63adf5cb42_SS1 </ci>
-                <ci> mw27aa16fc_b76d_46c2_b301_0456b7e3aace_SS1 </ci>
+                <ci> Ribo_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -175,7 +164,7 @@
       <reaction id="mw32c43fdc_054d_44c4_944e_c7628d4180f7_SS1" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw27bf35db_2b1d_439b_a0c4_81972bf226ef_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw3c367a17_7386_470c_8c72_954a48def552_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNAP_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mwb9ed4bd5_8cd9_4f48_9f51_256760be89c7_SS1" stoichiometry="1" constant="true"/>
@@ -188,7 +177,7 @@
                 <times/>
                 <ci> mw48cc8c87_2548_4333_b0d0_129277cd1fb4 </ci>
                 <ci> mw27bf35db_2b1d_439b_a0c4_81972bf226ef_SS1 </ci>
-                <ci> mw3c367a17_7386_470c_8c72_954a48def552_SS1 </ci>
+                <ci> RNAP_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -228,7 +217,7 @@
           <speciesReference species="mw42ea34c3_4490_4d8a_8ee5_dd1c4ac5319c_SS1" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw3c367a17_7386_470c_8c72_954a48def552_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNAP_combined" stoichiometry="1" constant="true"/>
           <speciesReference species="mw27bf35db_2b1d_439b_a0c4_81972bf226ef_SS1" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
@@ -247,7 +236,7 @@
       <reaction id="mwb80aa33f_0e67_4823_8723_f9c93b9cfacd_SS1" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mwb9ed4bd5_8cd9_4f48_9f51_256760be89c7_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw34fb2519_79b1_4f10_8668_6410726988c5_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="AGTP_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw0d097c9c_0e16_42d5_a990_888eb21274ba_SS1" stoichiometry="1" constant="true"/>
@@ -260,7 +249,7 @@
                 <times/>
                 <ci> mw490dcf1e_63bd_479e_a995_3f131fb43e97 </ci>
                 <ci> mwb9ed4bd5_8cd9_4f48_9f51_256760be89c7_SS1 </ci>
-                <ci> mw34fb2519_79b1_4f10_8668_6410726988c5_SS1 </ci>
+                <ci> AGTP_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -278,7 +267,7 @@
       <reaction id="mwb0019472_5c22_4b20_9ba8_5b184acbdc4b_SS1" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mwb9ed4bd5_8cd9_4f48_9f51_256760be89c7_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw4f8d0806_0366_43d5_8a2a_a05ee3287512_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="CUTP_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mwb668d480_993b_469d_8925_7393c33b0558_SS1" stoichiometry="1" constant="true"/>
@@ -291,7 +280,7 @@
                 <times/>
                 <ci> mwec2a5da9_9f9d_42c6_b2de_a4a19dae0dda </ci>
                 <ci> mwb9ed4bd5_8cd9_4f48_9f51_256760be89c7_SS1 </ci>
-                <ci> mw4f8d0806_0366_43d5_8a2a_a05ee3287512_SS1 </ci>
+                <ci> CUTP_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -309,7 +298,7 @@
       <reaction id="mw483b2885_4e32_40d4_ae03_ecc24729a62d_SS1" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw0d097c9c_0e16_42d5_a990_888eb21274ba_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw4f8d0806_0366_43d5_8a2a_a05ee3287512_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="CUTP_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw9c2e00f3_d345_4af1_918d_b211abb46cda_SS1" stoichiometry="1" constant="true"/>
@@ -322,7 +311,7 @@
                 <times/>
                 <ci> mwf3f8bee7_7617_49f4_990a_afc7b5485ca7 </ci>
                 <ci> mw0d097c9c_0e16_42d5_a990_888eb21274ba_SS1 </ci>
-                <ci> mw4f8d0806_0366_43d5_8a2a_a05ee3287512_SS1 </ci>
+                <ci> CUTP_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -340,7 +329,7 @@
       <reaction id="mwc743b64f_a6a6_493c_8445_a454771ea4b8_SS1" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mwb668d480_993b_469d_8925_7393c33b0558_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw34fb2519_79b1_4f10_8668_6410726988c5_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="AGTP_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw9c2e00f3_d345_4af1_918d_b211abb46cda_SS1" stoichiometry="1" constant="true"/>
@@ -353,7 +342,7 @@
                 <times/>
                 <ci> mw710fb4f7_6073_42ed_a40d_41d009035891 </ci>
                 <ci> mwb668d480_993b_469d_8925_7393c33b0558_SS1 </ci>
-                <ci> mw34fb2519_79b1_4f10_8668_6410726988c5_SS1 </ci>
+                <ci> AGTP_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -392,7 +381,7 @@
       <reaction id="mw7ee44b56_392b_44bf_9f64_65be6c0343c2_SS1" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mwdad3b651_3698_4347_a3af_13c2fd1cd4eb_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw715c6bbe_f050_4257_8bc2_159625dc5aa5_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="AA_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw722ec4ac_80c5_4501_a092_98560b5118e5_SS1" stoichiometry="1" constant="true"/>
@@ -405,7 +394,7 @@
                 <times/>
                 <ci> mwa0cbd407_e863_4341_b66b_060977850e66 </ci>
                 <ci> mwdad3b651_3698_4347_a3af_13c2fd1cd4eb_SS1 </ci>
-                <ci> mw715c6bbe_f050_4257_8bc2_159625dc5aa5_SS1 </ci>
+                <ci> AA_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -423,7 +412,7 @@
       <reaction id="mwcba69707_7d63_4853_bdc3_d04b7d068da7_SS1" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw722ec4ac_80c5_4501_a092_98560b5118e5_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw34fb2519_79b1_4f10_8668_6410726988c5_SS1" stoichiometry="2" constant="true"/>
+          <speciesReference species="AGTP_combined" stoichiometry="2" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mwd4771b8c_b1d7_4c13_997f_683e301a502a_SS1" stoichiometry="1" constant="true"/>
@@ -438,7 +427,7 @@
                 <ci> mw722ec4ac_80c5_4501_a092_98560b5118e5_SS1 </ci>
                 <apply>
                   <power/>
-                  <ci> mw34fb2519_79b1_4f10_8668_6410726988c5_SS1 </ci>
+                  <ci> AGTP_combined </ci>
                   <cn type="integer"> 2 </cn>
                 </apply>
               </apply>
@@ -502,7 +491,7 @@
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw3df01083_618d_4509_9811_8b63adf5cb42_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw27aa16fc_b76d_46c2_b301_0456b7e3aace_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="Ribo_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -520,7 +509,7 @@
       <reaction id="mw7d29a1c1_af88_4806_a677_0ff5ed99d36d_SS1" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw3df01083_618d_4509_9811_8b63adf5cb42_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw288eb330_bc2f_470f_9628_e990cb2252e5_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw773fc4b1_f808_4bf3_85ad_07ce9b454369_SS1" stoichiometry="1" constant="true"/>
@@ -533,7 +522,7 @@
                 <times/>
                 <ci> mw9031e56e_f709_472e_841a_f697866e9019 </ci>
                 <ci> mw3df01083_618d_4509_9811_8b63adf5cb42_SS1 </ci>
-                <ci> mw288eb330_bc2f_470f_9628_e990cb2252e5_SS1 </ci>
+                <ci> RNase_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -553,7 +542,7 @@
           <speciesReference species="mw773fc4b1_f808_4bf3_85ad_07ce9b454369_SS1" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw288eb330_bc2f_470f_9628_e990cb2252e5_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -571,7 +560,7 @@
       <reaction id="mw808ed454_cf22_4658_8b50_9e7938af39f6_SS1" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mwdad3b651_3698_4347_a3af_13c2fd1cd4eb_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw288eb330_bc2f_470f_9628_e990cb2252e5_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw3222fc51_b8a6_481b_adcf_8fa66964731e_SS1" stoichiometry="1" constant="true"/>
@@ -584,7 +573,7 @@
                 <times/>
                 <ci> mw0d51dc68_2890_43f9_bdd4_ac1b1ef92525 </ci>
                 <ci> mwdad3b651_3698_4347_a3af_13c2fd1cd4eb_SS1 </ci>
-                <ci> mw288eb330_bc2f_470f_9628_e990cb2252e5_SS1 </ci>
+                <ci> RNase_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -604,8 +593,8 @@
           <speciesReference species="mw3222fc51_b8a6_481b_adcf_8fa66964731e_SS1" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw288eb330_bc2f_470f_9628_e990cb2252e5_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw27aa16fc_b76d_46c2_b301_0456b7e3aace_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
+          <speciesReference species="Ribo_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -623,7 +612,7 @@
       <reaction id="mwd9e27d2b_0794_4f96_b217_610230786396_SS1" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mwd4771b8c_b1d7_4c13_997f_683e301a502a_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw288eb330_bc2f_470f_9628_e990cb2252e5_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mwbd8bbca4_ad12_4dd6_80fc_656686d30456_SS1" stoichiometry="1" constant="true"/>
@@ -636,7 +625,7 @@
                 <times/>
                 <ci> mw93741c58_8277_4c4d_ae0b_f66c8b61386d </ci>
                 <ci> mwd4771b8c_b1d7_4c13_997f_683e301a502a_SS1 </ci>
-                <ci> mw288eb330_bc2f_470f_9628_e990cb2252e5_SS1 </ci>
+                <ci> RNase_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -656,10 +645,10 @@
           <speciesReference species="mwbd8bbca4_ad12_4dd6_80fc_656686d30456_SS1" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw288eb330_bc2f_470f_9628_e990cb2252e5_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw715c6bbe_f050_4257_8bc2_159625dc5aa5_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw34fb2519_79b1_4f10_8668_6410726988c5_SS1" stoichiometry="2" constant="true"/>
-          <speciesReference species="mw27aa16fc_b76d_46c2_b301_0456b7e3aace_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
+          <speciesReference species="AA_combined" stoichiometry="1" constant="true"/>
+          <speciesReference species="AGTP_combined" stoichiometry="2" constant="true"/>
+          <speciesReference species="Ribo_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -677,7 +666,7 @@
       <reaction id="mw9c8debee_f20e_46af_adcb_7bf420e4dea2_SS1" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mwecef8e3a_4d8c_4f45_87ff_436093b9076f_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw288eb330_bc2f_470f_9628_e990cb2252e5_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw5453f37e_770a_422a_ba2f_43c5372ca7be_SS1" stoichiometry="1" constant="true"/>
@@ -690,7 +679,7 @@
                 <times/>
                 <ci> mw880f4368_ff12_4fb4_8274_f28a85086459 </ci>
                 <ci> mwecef8e3a_4d8c_4f45_87ff_436093b9076f_SS1 </ci>
-                <ci> mw288eb330_bc2f_470f_9628_e990cb2252e5_SS1 </ci>
+                <ci> RNase_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -710,8 +699,8 @@
           <speciesReference species="mw5453f37e_770a_422a_ba2f_43c5372ca7be_SS1" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw288eb330_bc2f_470f_9628_e990cb2252e5_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw27aa16fc_b76d_46c2_b301_0456b7e3aace_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
+          <speciesReference species="Ribo_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -729,7 +718,7 @@
       <reaction id="mw3270dad3_c7a3_4305_ad64_dca872557e9c_SS1" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw722ec4ac_80c5_4501_a092_98560b5118e5_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw288eb330_bc2f_470f_9628_e990cb2252e5_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mwe1a34348_ddac_4a4e_be5b_0895f8905865_SS1" stoichiometry="1" constant="true"/>
@@ -742,7 +731,7 @@
                 <times/>
                 <ci> mwaf2b763e_ef31_46f8_941a_79f8b7912007 </ci>
                 <ci> mw722ec4ac_80c5_4501_a092_98560b5118e5_SS1 </ci>
-                <ci> mw288eb330_bc2f_470f_9628_e990cb2252e5_SS1 </ci>
+                <ci> RNase_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -762,9 +751,9 @@
           <speciesReference species="mwe1a34348_ddac_4a4e_be5b_0895f8905865_SS1" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw288eb330_bc2f_470f_9628_e990cb2252e5_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw715c6bbe_f050_4257_8bc2_159625dc5aa5_SS1" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw27aa16fc_b76d_46c2_b301_0456b7e3aace_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
+          <speciesReference species="AA_combined" stoichiometry="1" constant="true"/>
+          <speciesReference species="Ribo_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -781,17 +770,17 @@
       </reaction>
       <reaction id="mwdf2c0f1e_af7c_4b62_9d47_6cc4f9f42a01_SS1" reversible="false" fast="false">
         <listOfReactants>
-          <speciesReference species="mw34fb2519_79b1_4f10_8668_6410726988c5_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="AGTP_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mwbbb6129b_1e4f_4f45_96c0_f3b1fbebdb22_SS1" stoichiometry="1" constant="true"/>
+          <speciesReference species="AGTP_USED_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
               <ci> mwf1bae5f6_117f_478f_bafa_33e07e694fc4_SS1 </ci>
-              <ci> mw34fb2519_79b1_4f10_8668_6410726988c5_SS1 </ci>
+              <ci> AGTP_combined </ci>
             </apply>
           </math>
         </kineticLaw>
@@ -799,7 +788,7 @@
       <reaction id="mwff1cec63_4a3e_4cb5_8e16_57bef83e3ddf_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mwc00961a6_47d1_4f5a_9c49_00fb0d02cd8a_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw28f62bd1_3a2b_45ba_be22_53e2eb1a9509_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="IPTG_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw36dad171_05d7_4907_8d71_c2b3b5e51352_SS2" stoichiometry="1" constant="true"/>
@@ -812,7 +801,7 @@
                 <times/>
                 <ci> mwed97bcbd_4d1b_4df8_9cc5_6efe8dc18edf </ci>
                 <ci> mwc00961a6_47d1_4f5a_9c49_00fb0d02cd8a_SS2 </ci>
-                <ci> mw28f62bd1_3a2b_45ba_be22_53e2eb1a9509_SS2 </ci>
+                <ci> IPTG_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -896,7 +885,7 @@
       <reaction id="mw39391935_db59_4854_a7f3_d007a3c800e9_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mwcbd6bcc3_2c61_4e12_a6f7_e1ac7bc57188_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mwe54945ce_9d19_4055_b186_48aad8d539a7_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="Ribo_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw6fb7f787_57b9_494d_a431_121e3ccbcda9_SS2" stoichiometry="1" constant="true"/>
@@ -909,7 +898,7 @@
                 <times/>
                 <ci> mwea067fb0_944c_4ea9_ad77_d6c4637982d5 </ci>
                 <ci> mwcbd6bcc3_2c61_4e12_a6f7_e1ac7bc57188_SS2 </ci>
-                <ci> mwe54945ce_9d19_4055_b186_48aad8d539a7_SS2 </ci>
+                <ci> Ribo_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -927,7 +916,7 @@
       <reaction id="mwa1f4ef50_1840_44c6_b67d_a4e5a1a3c6fd_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mwdb801a58_028d_43ff_90eb_830d15b4bc7f_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw88609092_a820_4312_9f44_7089240fc041_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNAP_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mwde89bce9_6b96_41b5_ab10_47fdb6f84323_SS2" stoichiometry="1" constant="true"/>
@@ -940,7 +929,7 @@
                 <times/>
                 <ci> mwd1e6aca1_12f3_4a1c_8a72_af7a96b9813b </ci>
                 <ci> mwdb801a58_028d_43ff_90eb_830d15b4bc7f_SS2 </ci>
-                <ci> mw88609092_a820_4312_9f44_7089240fc041_SS2 </ci>
+                <ci> RNAP_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -980,7 +969,7 @@
           <speciesReference species="mw117ae676_633e_4f3a_be8d_eacdbdddfeea_SS2" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw88609092_a820_4312_9f44_7089240fc041_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNAP_combined" stoichiometry="1" constant="true"/>
           <speciesReference species="mwdb801a58_028d_43ff_90eb_830d15b4bc7f_SS2" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
@@ -999,7 +988,7 @@
       <reaction id="mw1f48fbad_07b8_4e1d_bbe5_fd536dbd34bb_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mwde89bce9_6b96_41b5_ab10_47fdb6f84323_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw4fb63e25_555b_4449_82e9_57273897e481_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="AGTP_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw4740c413_fa03_405b_a56e_3a2fd6375f6c_SS2" stoichiometry="1" constant="true"/>
@@ -1012,7 +1001,7 @@
                 <times/>
                 <ci> mw5d32e76c_c3b5_41f5_ab4d_a989739e976b </ci>
                 <ci> mwde89bce9_6b96_41b5_ab10_47fdb6f84323_SS2 </ci>
-                <ci> mw4fb63e25_555b_4449_82e9_57273897e481_SS2 </ci>
+                <ci> AGTP_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -1030,7 +1019,7 @@
       <reaction id="mwd1f72a45_72cd_40ec_960f_1239c4292778_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mwde89bce9_6b96_41b5_ab10_47fdb6f84323_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mwfc2523f4_818e_4cfc_8a78_dc586dd37d07_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="CUTP_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mwb71129fd_b0dc_41ce_a833_e547a1c07b4f_SS2" stoichiometry="1" constant="true"/>
@@ -1043,7 +1032,7 @@
                 <times/>
                 <ci> mwe97cb484_3f1f_4130_b862_68561e44f9e7 </ci>
                 <ci> mwde89bce9_6b96_41b5_ab10_47fdb6f84323_SS2 </ci>
-                <ci> mwfc2523f4_818e_4cfc_8a78_dc586dd37d07_SS2 </ci>
+                <ci> CUTP_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -1061,7 +1050,7 @@
       <reaction id="mw4c9145df_8b24_4aaa_a454_8036c6007b39_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw4740c413_fa03_405b_a56e_3a2fd6375f6c_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mwfc2523f4_818e_4cfc_8a78_dc586dd37d07_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="CUTP_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mwb8e6b1d7_6c72_4a9b_a640_24ba06276629_SS2" stoichiometry="1" constant="true"/>
@@ -1074,7 +1063,7 @@
                 <times/>
                 <ci> mwdb1afb7b_616f_4514_aa03_8864294581f7 </ci>
                 <ci> mw4740c413_fa03_405b_a56e_3a2fd6375f6c_SS2 </ci>
-                <ci> mwfc2523f4_818e_4cfc_8a78_dc586dd37d07_SS2 </ci>
+                <ci> CUTP_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -1092,7 +1081,7 @@
       <reaction id="mwaa070dd1_2fdb_4813_8e3e_0e4755cfbdd6_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mwb71129fd_b0dc_41ce_a833_e547a1c07b4f_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw4fb63e25_555b_4449_82e9_57273897e481_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="AGTP_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mwb8e6b1d7_6c72_4a9b_a640_24ba06276629_SS2" stoichiometry="1" constant="true"/>
@@ -1105,7 +1094,7 @@
                 <times/>
                 <ci> mw324437a8_304c_4428_82a3_e4d0282c46a1 </ci>
                 <ci> mwb71129fd_b0dc_41ce_a833_e547a1c07b4f_SS2 </ci>
-                <ci> mw4fb63e25_555b_4449_82e9_57273897e481_SS2 </ci>
+                <ci> AGTP_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -1144,7 +1133,7 @@
       <reaction id="mw84c3bc07_76f7_4c44_a07f_2bc8abfa4bc2_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw6fb7f787_57b9_494d_a431_121e3ccbcda9_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw23834843_3708_4b86_abd8_09c25561cb03_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="AA_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mwf36a5d62_cdc5_4e90_af35_a9fa5ddb33e2_SS2" stoichiometry="1" constant="true"/>
@@ -1157,7 +1146,7 @@
                 <times/>
                 <ci> mwa454e0eb_5b9b_4abe_97fb_c8fecd1a5067 </ci>
                 <ci> mw6fb7f787_57b9_494d_a431_121e3ccbcda9_SS2 </ci>
-                <ci> mw23834843_3708_4b86_abd8_09c25561cb03_SS2 </ci>
+                <ci> AA_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -1175,7 +1164,7 @@
       <reaction id="mw93caaec5_11f1_4f31_ab8f_aff6bbb0d5dc_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mwf36a5d62_cdc5_4e90_af35_a9fa5ddb33e2_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw4fb63e25_555b_4449_82e9_57273897e481_SS2" stoichiometry="2" constant="true"/>
+          <speciesReference species="AGTP_combined" stoichiometry="2" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw969018c5_d898_4ea0_bb80_35de71266464_SS2" stoichiometry="1" constant="true"/>
@@ -1190,7 +1179,7 @@
                 <ci> mwf36a5d62_cdc5_4e90_af35_a9fa5ddb33e2_SS2 </ci>
                 <apply>
                   <power/>
-                  <ci> mw4fb63e25_555b_4449_82e9_57273897e481_SS2 </ci>
+                  <ci> AGTP_combined </ci>
                   <cn type="integer"> 2 </cn>
                 </apply>
               </apply>
@@ -1254,7 +1243,7 @@
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mwcbd6bcc3_2c61_4e12_a6f7_e1ac7bc57188_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mwe54945ce_9d19_4055_b186_48aad8d539a7_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="Ribo_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1272,7 +1261,7 @@
       <reaction id="mwe24cd258_a7e7_40f5_833d_c3d41e0ef046_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mwcbd6bcc3_2c61_4e12_a6f7_e1ac7bc57188_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mwcb7850c8_3801_4d30_9282_42269ca72cc2_SS2" stoichiometry="1" constant="true"/>
@@ -1285,7 +1274,7 @@
                 <times/>
                 <ci> mw5503e10b_b399_401c_85c1_34fcb4a75ef2 </ci>
                 <ci> mwcbd6bcc3_2c61_4e12_a6f7_e1ac7bc57188_SS2 </ci>
-                <ci> mw5a769204_a049_475d_8d40_b3980a459584_SS2 </ci>
+                <ci> RNase_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -1305,7 +1294,7 @@
           <speciesReference species="mwcb7850c8_3801_4d30_9282_42269ca72cc2_SS2" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1323,7 +1312,7 @@
       <reaction id="mw4db04782_491a_4679_8196_cafbc55b9f95_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw6fb7f787_57b9_494d_a431_121e3ccbcda9_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mwf0fa4e98_5b94_43bf_9fd1_16e075a088f9_SS2" stoichiometry="1" constant="true"/>
@@ -1336,7 +1325,7 @@
                 <times/>
                 <ci> mwb6485fb2_9c6d_49a4_8420_c7c4c53a90cc </ci>
                 <ci> mw6fb7f787_57b9_494d_a431_121e3ccbcda9_SS2 </ci>
-                <ci> mw5a769204_a049_475d_8d40_b3980a459584_SS2 </ci>
+                <ci> RNase_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -1356,8 +1345,8 @@
           <speciesReference species="mwf0fa4e98_5b94_43bf_9fd1_16e075a088f9_SS2" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mwe54945ce_9d19_4055_b186_48aad8d539a7_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
+          <speciesReference species="Ribo_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1375,7 +1364,7 @@
       <reaction id="mw3d049690_08fa_4d0a_ba4c_0a9b22df2891_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw969018c5_d898_4ea0_bb80_35de71266464_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw87bea200_227d_4010_9616_9bee4d30458b_SS2" stoichiometry="1" constant="true"/>
@@ -1388,7 +1377,7 @@
                 <times/>
                 <ci> mw33c60e2e_0342_44e5_9018_5b0afb2d9e37 </ci>
                 <ci> mw969018c5_d898_4ea0_bb80_35de71266464_SS2 </ci>
-                <ci> mw5a769204_a049_475d_8d40_b3980a459584_SS2 </ci>
+                <ci> RNase_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -1408,10 +1397,10 @@
           <speciesReference species="mw87bea200_227d_4010_9616_9bee4d30458b_SS2" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw23834843_3708_4b86_abd8_09c25561cb03_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw4fb63e25_555b_4449_82e9_57273897e481_SS2" stoichiometry="2" constant="true"/>
-          <speciesReference species="mwe54945ce_9d19_4055_b186_48aad8d539a7_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
+          <speciesReference species="AA_combined" stoichiometry="1" constant="true"/>
+          <speciesReference species="AGTP_combined" stoichiometry="2" constant="true"/>
+          <speciesReference species="Ribo_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1429,7 +1418,7 @@
       <reaction id="mwbd81f83f_4a97_4d53_b31d_ece9ad1375d6_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw7416e86a_aa61_4745_b4bc_072c5e137891_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mwd91c4e55_95af_42a7_ac6d_2c307d96e1fe_SS2" stoichiometry="1" constant="true"/>
@@ -1442,7 +1431,7 @@
                 <times/>
                 <ci> mw5ba0589c_de85_47f9_b4de_6521446eb626 </ci>
                 <ci> mw7416e86a_aa61_4745_b4bc_072c5e137891_SS2 </ci>
-                <ci> mw5a769204_a049_475d_8d40_b3980a459584_SS2 </ci>
+                <ci> RNase_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -1462,8 +1451,8 @@
           <speciesReference species="mwd91c4e55_95af_42a7_ac6d_2c307d96e1fe_SS2" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mwe54945ce_9d19_4055_b186_48aad8d539a7_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
+          <speciesReference species="Ribo_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1481,7 +1470,7 @@
       <reaction id="mwdba62f7f_eedb_4972_bd0f_2056dfa80482_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mwf36a5d62_cdc5_4e90_af35_a9fa5ddb33e2_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mwf056a433_e0f6_461e_bfe3_c2b3c62486ca_SS2" stoichiometry="1" constant="true"/>
@@ -1494,7 +1483,7 @@
                 <times/>
                 <ci> mw98935be7_cc3a_45c9_82a1_60b4de40e60b </ci>
                 <ci> mwf36a5d62_cdc5_4e90_af35_a9fa5ddb33e2_SS2 </ci>
-                <ci> mw5a769204_a049_475d_8d40_b3980a459584_SS2 </ci>
+                <ci> RNase_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -1514,9 +1503,9 @@
           <speciesReference species="mwf056a433_e0f6_461e_bfe3_c2b3c62486ca_SS2" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw23834843_3708_4b86_abd8_09c25561cb03_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mwe54945ce_9d19_4055_b186_48aad8d539a7_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
+          <speciesReference species="AA_combined" stoichiometry="1" constant="true"/>
+          <speciesReference species="Ribo_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1554,7 +1543,7 @@
       <reaction id="mw662fff41_e987_4afc_a587_e68c159d727c_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw6a8ec7cf_9ce3_4f43_a91b_8cf54a67e9cb_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mwe54945ce_9d19_4055_b186_48aad8d539a7_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="Ribo_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw11bfe9cd_0d22_4115_b9f7_163fa42fa97b_SS2" stoichiometry="1" constant="true"/>
@@ -1567,7 +1556,7 @@
                 <times/>
                 <ci> mw047616e8_0b14_42e1_aa37_4c17eb01c742 </ci>
                 <ci> mw6a8ec7cf_9ce3_4f43_a91b_8cf54a67e9cb_SS2 </ci>
-                <ci> mwe54945ce_9d19_4055_b186_48aad8d539a7_SS2 </ci>
+                <ci> Ribo_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -1585,7 +1574,7 @@
       <reaction id="mw63c8c74c_e420_4859_bc9d_f3cd3b410fed_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw0f006cd4_e78e_48c5_b532_eb6e2f3c6121_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw88609092_a820_4312_9f44_7089240fc041_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNAP_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw55a8259b_29cf_445a_a79e_f0229fbc33d2_SS2" stoichiometry="1" constant="true"/>
@@ -1598,7 +1587,7 @@
                 <times/>
                 <ci> mwa4a57dad_68c2_457b_b8fe_5e44e0f79081 </ci>
                 <ci> mw0f006cd4_e78e_48c5_b532_eb6e2f3c6121_SS2 </ci>
-                <ci> mw88609092_a820_4312_9f44_7089240fc041_SS2 </ci>
+                <ci> RNAP_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -1638,7 +1627,7 @@
           <speciesReference species="mwc200e475_c73f_465a_8de3_97b93a64c967_SS2" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw88609092_a820_4312_9f44_7089240fc041_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNAP_combined" stoichiometry="1" constant="true"/>
           <speciesReference species="mw0f006cd4_e78e_48c5_b532_eb6e2f3c6121_SS2" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
@@ -1657,7 +1646,7 @@
       <reaction id="mw8486db3d_08d8_4c71_a449_c98a2309d0c0_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw55a8259b_29cf_445a_a79e_f0229fbc33d2_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw4fb63e25_555b_4449_82e9_57273897e481_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="AGTP_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mwd6c5bf43_5a9f_455e_8341_73d1b30d0264_SS2" stoichiometry="1" constant="true"/>
@@ -1670,7 +1659,7 @@
                 <times/>
                 <ci> mw2954d485_8830_42f7_9567_c5fb232a305e </ci>
                 <ci> mw55a8259b_29cf_445a_a79e_f0229fbc33d2_SS2 </ci>
-                <ci> mw4fb63e25_555b_4449_82e9_57273897e481_SS2 </ci>
+                <ci> AGTP_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -1688,7 +1677,7 @@
       <reaction id="mwfab17263_0776_4af5_82cc_4b5f841b645f_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw55a8259b_29cf_445a_a79e_f0229fbc33d2_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mwfc2523f4_818e_4cfc_8a78_dc586dd37d07_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="CUTP_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw49de218b_1e29_45e1_862c_0dc03a516700_SS2" stoichiometry="1" constant="true"/>
@@ -1701,7 +1690,7 @@
                 <times/>
                 <ci> mw861809d2_2f89_480e_8ac0_a22bd363ee4d </ci>
                 <ci> mw55a8259b_29cf_445a_a79e_f0229fbc33d2_SS2 </ci>
-                <ci> mwfc2523f4_818e_4cfc_8a78_dc586dd37d07_SS2 </ci>
+                <ci> CUTP_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -1719,7 +1708,7 @@
       <reaction id="mw7ad9678a_3fe9_40fc_843b_1f49e071adf1_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mwd6c5bf43_5a9f_455e_8341_73d1b30d0264_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mwfc2523f4_818e_4cfc_8a78_dc586dd37d07_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="CUTP_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw68ff84bd_5ee7_416e_8ada_d4f9bad9d42b_SS2" stoichiometry="1" constant="true"/>
@@ -1732,7 +1721,7 @@
                 <times/>
                 <ci> mw420d2b27_f423_4274_84cb_6cac151f0d41 </ci>
                 <ci> mwd6c5bf43_5a9f_455e_8341_73d1b30d0264_SS2 </ci>
-                <ci> mwfc2523f4_818e_4cfc_8a78_dc586dd37d07_SS2 </ci>
+                <ci> CUTP_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -1750,7 +1739,7 @@
       <reaction id="mw6a52a681_b8b0_446c_a757_b22fbc312241_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw49de218b_1e29_45e1_862c_0dc03a516700_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw4fb63e25_555b_4449_82e9_57273897e481_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="AGTP_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw68ff84bd_5ee7_416e_8ada_d4f9bad9d42b_SS2" stoichiometry="1" constant="true"/>
@@ -1763,7 +1752,7 @@
                 <times/>
                 <ci> mw7f4252d3_360b_4d1c_be74_de2dd056dd30 </ci>
                 <ci> mw49de218b_1e29_45e1_862c_0dc03a516700_SS2 </ci>
-                <ci> mw4fb63e25_555b_4449_82e9_57273897e481_SS2 </ci>
+                <ci> AGTP_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -1833,7 +1822,7 @@
       <reaction id="mw9b7e5a40_78d9_4ae0_8175_8c704b3e5e15_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw11bfe9cd_0d22_4115_b9f7_163fa42fa97b_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw23834843_3708_4b86_abd8_09c25561cb03_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="AA_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw6729d170_4447_449b_9e97_0908b0caab6b_SS2" stoichiometry="1" constant="true"/>
@@ -1846,7 +1835,7 @@
                 <times/>
                 <ci> mw886360ca_3240_4b70_b2ed_71f6a14f6991 </ci>
                 <ci> mw11bfe9cd_0d22_4115_b9f7_163fa42fa97b_SS2 </ci>
-                <ci> mw23834843_3708_4b86_abd8_09c25561cb03_SS2 </ci>
+                <ci> AA_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -1864,7 +1853,7 @@
       <reaction id="mw886cdd23_9cc1_4a2c_988e_4e7847ce9edb_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw6729d170_4447_449b_9e97_0908b0caab6b_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw4fb63e25_555b_4449_82e9_57273897e481_SS2" stoichiometry="2" constant="true"/>
+          <speciesReference species="AGTP_combined" stoichiometry="2" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw50cebc13_eef8_41ce_9a71_72ef3e078558_SS2" stoichiometry="1" constant="true"/>
@@ -1879,7 +1868,7 @@
                 <ci> mw6729d170_4447_449b_9e97_0908b0caab6b_SS2 </ci>
                 <apply>
                   <power/>
-                  <ci> mw4fb63e25_555b_4449_82e9_57273897e481_SS2 </ci>
+                  <ci> AGTP_combined </ci>
                   <cn type="integer"> 2 </cn>
                 </apply>
               </apply>
@@ -1943,7 +1932,7 @@
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw6a8ec7cf_9ce3_4f43_a91b_8cf54a67e9cb_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mwe54945ce_9d19_4055_b186_48aad8d539a7_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="Ribo_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -1961,7 +1950,7 @@
       <reaction id="mw02c6a3ac_95fe_4064_9ee1_8d2ea4e0fb42_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw6a8ec7cf_9ce3_4f43_a91b_8cf54a67e9cb_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw611fccdf_157e_40db_8702_848bfb75c079_SS2" stoichiometry="1" constant="true"/>
@@ -1974,7 +1963,7 @@
                 <times/>
                 <ci> mwb8b2f665_972a_4fa5_b77b_65267d72d771 </ci>
                 <ci> mw6a8ec7cf_9ce3_4f43_a91b_8cf54a67e9cb_SS2 </ci>
-                <ci> mw5a769204_a049_475d_8d40_b3980a459584_SS2 </ci>
+                <ci> RNase_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -1994,7 +1983,7 @@
           <speciesReference species="mw611fccdf_157e_40db_8702_848bfb75c079_SS2" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2012,7 +2001,7 @@
       <reaction id="mw61e9151f_eb11_4ec4_89ee_3abff528e7a3_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw11bfe9cd_0d22_4115_b9f7_163fa42fa97b_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw7e686ddd_072e_4ab7_8512_92481d978201_SS2" stoichiometry="1" constant="true"/>
@@ -2025,7 +2014,7 @@
                 <times/>
                 <ci> mw9095c419_1af6_423f_a17b_f35649e9b8e3 </ci>
                 <ci> mw11bfe9cd_0d22_4115_b9f7_163fa42fa97b_SS2 </ci>
-                <ci> mw5a769204_a049_475d_8d40_b3980a459584_SS2 </ci>
+                <ci> RNase_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -2045,8 +2034,8 @@
           <speciesReference species="mw7e686ddd_072e_4ab7_8512_92481d978201_SS2" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mwe54945ce_9d19_4055_b186_48aad8d539a7_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
+          <speciesReference species="Ribo_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2064,7 +2053,7 @@
       <reaction id="mwa1246a57_cc2a_492f_a329_0d7575269aac_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw50cebc13_eef8_41ce_9a71_72ef3e078558_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw88722339_572e_456f_85da_875cfc4e92bc_SS2" stoichiometry="1" constant="true"/>
@@ -2077,7 +2066,7 @@
                 <times/>
                 <ci> mw93951f7c_0025_4fcb_b7aa_13011fab660e </ci>
                 <ci> mw50cebc13_eef8_41ce_9a71_72ef3e078558_SS2 </ci>
-                <ci> mw5a769204_a049_475d_8d40_b3980a459584_SS2 </ci>
+                <ci> RNase_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -2097,10 +2086,10 @@
           <speciesReference species="mw88722339_572e_456f_85da_875cfc4e92bc_SS2" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw23834843_3708_4b86_abd8_09c25561cb03_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw4fb63e25_555b_4449_82e9_57273897e481_SS2" stoichiometry="2" constant="true"/>
-          <speciesReference species="mwe54945ce_9d19_4055_b186_48aad8d539a7_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
+          <speciesReference species="AA_combined" stoichiometry="1" constant="true"/>
+          <speciesReference species="AGTP_combined" stoichiometry="2" constant="true"/>
+          <speciesReference species="Ribo_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2118,7 +2107,7 @@
       <reaction id="mwee1494a3_9573_4d5d_89b8_02246c41395c_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mwe03e3eea_a713_4196_a6d8_44a14c926596_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw6b40acd5_0395_4c2b_a5d8_eae734923797_SS2" stoichiometry="1" constant="true"/>
@@ -2131,7 +2120,7 @@
                 <times/>
                 <ci> mw67ee2769_d071_4e0c_8ae9_890a69369c1c </ci>
                 <ci> mwe03e3eea_a713_4196_a6d8_44a14c926596_SS2 </ci>
-                <ci> mw5a769204_a049_475d_8d40_b3980a459584_SS2 </ci>
+                <ci> RNase_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -2151,8 +2140,8 @@
           <speciesReference species="mw6b40acd5_0395_4c2b_a5d8_eae734923797_SS2" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mwe54945ce_9d19_4055_b186_48aad8d539a7_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
+          <speciesReference species="Ribo_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2170,7 +2159,7 @@
       <reaction id="mwc81c8682_5085_488d_b949_d8b342a4bd66_SS2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw6729d170_4447_449b_9e97_0908b0caab6b_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mwa029c0f1_d85f_44ba_a505_84310ebae4b0_SS2" stoichiometry="1" constant="true"/>
@@ -2183,7 +2172,7 @@
                 <times/>
                 <ci> mw6e36b10f_0200_499f_802b_7186ac265e97 </ci>
                 <ci> mw6729d170_4447_449b_9e97_0908b0caab6b_SS2 </ci>
-                <ci> mw5a769204_a049_475d_8d40_b3980a459584_SS2 </ci>
+                <ci> RNase_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -2203,9 +2192,9 @@
           <speciesReference species="mwa029c0f1_d85f_44ba_a505_84310ebae4b0_SS2" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="mw5a769204_a049_475d_8d40_b3980a459584_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mw23834843_3708_4b86_abd8_09c25561cb03_SS2" stoichiometry="1" constant="true"/>
-          <speciesReference species="mwe54945ce_9d19_4055_b186_48aad8d539a7_SS2" stoichiometry="1" constant="true"/>
+          <speciesReference species="RNase_combined" stoichiometry="1" constant="true"/>
+          <speciesReference species="AA_combined" stoichiometry="1" constant="true"/>
+          <speciesReference species="Ribo_combined" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2220,27 +2209,10 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="mw54ae9a8b_cc17_45e5_b883_9d4fee02c4f5_SS2" reversible="false" fast="false">
-        <listOfReactants>
-          <speciesReference species="mw4fb63e25_555b_4449_82e9_57273897e481_SS2" stoichiometry="1" constant="true"/>
-        </listOfReactants>
-        <listOfProducts>
-          <speciesReference species="mw2c794e9f_5551_4a06_b56f_73cf74bedc6d_SS2" stoichiometry="1" constant="true"/>
-        </listOfProducts>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <apply>
-              <times/>
-              <ci> mwc2ce705a_11c4_429d_a1e9_4163d818c21e_SS2 </ci>
-              <ci> mw4fb63e25_555b_4449_82e9_57273897e481_SS2 </ci>
-            </apply>
-          </math>
-        </kineticLaw>
-      </reaction>
       <reaction id="r1_" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="IPTG_" stoichiometry="1" constant="false"/>
-          <speciesReference species="xxprotein_alHL_" stoichiometry="1" constant="false"/>
+          <speciesReference species="IPTG_combined" stoichiometry="1" constant="false"/>
+          <speciesReference species="xxprotein_alHL_combined" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="xxIPTG_protein_alHL_" stoichiometry="1" constant="false"/>
@@ -2252,8 +2224,8 @@
               <apply>
                 <times/>
                 <ci> k1f_ </ci>
-                <ci> IPTG_ </ci>
-                <ci> xxprotein_alHL_ </ci>
+                <ci> IPTG_combined </ci>
+                <ci> xxprotein_alHL_combined </ci>
               </apply>
               <apply>
                 <times/>
@@ -2269,8 +2241,8 @@
           <speciesReference species="xxIPTG_protein_alHL_" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="IPTG_1_" stoichiometry="1" constant="false"/>
-          <speciesReference species="xxprotein_alHL_" stoichiometry="1" constant="false"/>
+          <speciesReference species="IPTG_combined" stoichiometry="1" constant="false"/>
+          <speciesReference species="xxprotein_alHL_combined" stoichiometry="1" constant="false"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
