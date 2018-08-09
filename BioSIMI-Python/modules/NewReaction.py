@@ -18,6 +18,30 @@ class NewReaction(object):
         '''The Reaction object attribute is set '''
         self.Reaction = reaction
 
+    def getId(self):
+        ''' Returns reaction id '''
+        return self.Reaction.getId()
+    
+    def setId(self, id):
+        ''' Set reaction id '''
+        self.Reaction.setId(id)
+    
+    def getReversible(self):
+        ''' Returns value of reversible attribute of the Reaction '''
+        return self.Reaction.getReversible()
+
+    def setReversible(self, bool):
+        ''' Set reversible attribute of the Reaction '''
+        self.Reaction.setReversible(bool)
+    
+    def getFast(self):
+        ''' Return value of fast attribute of the Reaction '''
+        return self.Reaction.getFast()
+    
+    def setFast(self, bool):
+        ''' Set fast attribute of the Reaction '''
+        self.Reaction.setFast(bool)
+
     def parseReactionString(self, rStr):
         '''
         Parses the reaction string to return a list of reactants (and products), a list of 

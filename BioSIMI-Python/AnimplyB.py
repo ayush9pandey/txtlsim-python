@@ -31,17 +31,17 @@ writeSBML(combined11.getSubsystemDoc(),'models/combined11.xml')
 
 # Simulate using bioscrape
 t_end = 14*60*60
-points = 1200
+points = 1200 
 timepoints = np.linspace(0, t_end, points)
 
-combined = createNewSubsystem(3,1)
-combined.combineSubsystems([A1, B1],True, 'virtual')
+# combined = createNewSubsystem(3,1)
+# combined.combineSubsystems([A1, B1],True, 'virtual')
 
-ListOfInputs = ['DNA plac--utr1--sigma28','DNA plac--utr1--sigmaX']
-ListOfListOfAmounts = [[0,0],[0.05,0],[0,1.1],[0.05,5]]
+# ListOfInputs = ['DNA plac--utr1--sigma28','DNA plac--utr1--sigmaX']
+# ListOfListOfAmounts = [[0,0],[0.05,0],[0,1.1],[0.05,5]]
 # ListOfSpeciesToPlot = ['protein deGFP*', 'protein tetRdimer']
-ListOfSpeciesToPlot = ['protein deGFP', 'protein sigma28', 'protein sigmaX', 'protein deGFP*', 'protein tetR', 'protein tetRdimer']
-combined.simulateVariableInputs(ListOfInputs, ListOfListOfAmounts, ListOfSpeciesToPlot, timepoints, 'reset')
+# ListOfSpeciesToPlot = ['protein deGFP', 'protein sigma28', 'protein sigmaX', 'protein deGFP*', 'protein tetR', 'protein tetRdimer']
+# combined.simulateVariableInputs(ListOfInputs, ListOfListOfAmounts, ListOfSpeciesToPlot, timepoints, 'reset')
 
 # Single input
 # input = 'DNA plac--utr1--sigmaX'
@@ -55,12 +55,12 @@ combined.simulateVariableInputs(ListOfInputs, ListOfListOfAmounts, ListOfSpecies
 # plotSbmlWithBioscrape('models/combined01.xml',0,
 # plotSbmlWithBioscrape('models/combined10.xml',0,
 # plotSbmlWithBioscrape('models/combined11.xml',0,
-# plotSbmlWithBioscrape('models/AnimplyB_mod.xml',0,
+plotSbmlWithBioscrape('models/AnimplyB_mod.xml',0,
 # plotSbmlWithBioscrape('combined11_mod.xml',0,
 # plotSbmlWithBioscrape('models/connected11.xml',0,
 # timepoints,['protein deGFP*', 'protein tetRdimer'],'Time',
 # timepoints,['protein deGFP', 'protein sigma28', 'protein sigmaX', 'protein deGFP*', 'protein tetR', 'protein tetRdimer'],'Time',
 # timepoints,['protein deGFP*', 'protein tetRdimer', 'protein sigmaX'],'Time',
 # timepoints,['protein deGFP*', 'protein tetRdimer', 'protein sigma28'],'Time',
-# timepoints,['protein deGFP*','protein sigma28', 'protein sigmaX', 'protein tetRdimer'],'Time',
-# 'concentration (nM)')
+timepoints,['protein deGFP*','protein sigma28', 'protein sigmaX', 'protein tetRdimer', 'protein deGFP', 'protein tetR'],'Time',
+'concentration (nM)')

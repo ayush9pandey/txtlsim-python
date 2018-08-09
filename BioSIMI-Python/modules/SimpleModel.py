@@ -334,6 +334,32 @@ class SimpleModel(object):
             return species_found
     
  
+    def getParameterByName(self, name):
+        ''' 
+        Returns a list of Parameters in the Model with the given name
+        '''
+        model = self.getModel()
+        check(model,'retreived model object')
+        parameter_found =[]
+        # Going through all local parameters
+        for reaction in model.getListOfReactions():
+            for local_param in reaction.getKineticLaw().getListOfLocalParameters():
+                if local_param.getName() == name:
+                    parameter_found.append(local_param)
+ 
+        # Going through all global parameters
+        for parameter in model.getListOfParameters():
+            if parameter.getName() == name:
+                parameter_found.append(parameter)
+
+        if len(parameter_found) == 1:
+            return parameter_found[0] 
+        elif not parameter_found:
+            raise SyntaxError('The parameter ' + name + ' not found.')
+        else:
+            warnings.warn('Multiple parameter with name ' + name + ' found. Returning a list')
+            return parameter_found
+ 
     def getAllIds(self):
         """ 
         Returns all SIds in the model in string format

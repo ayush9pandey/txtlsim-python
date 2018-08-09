@@ -7,6 +7,7 @@ from modules.utilityFunctions import *
 class Subsystem(object):
 
     def __init__(self, SubsystemDoc, System = None):
+        check(SubsystemDoc,'checking SBMLDocument object')
         self.SubsystemDoc = SubsystemDoc
         self.System = System
         
@@ -20,6 +21,7 @@ class Subsystem(object):
         '''
         The sbmlDoc is set as the SBMLDocument of the Subsystem
         '''
+        check(doc,'retreiving SBMLDocument object in self.setSubsystemDoc')
         self.SubsystemDoc = doc
 
     def setSystem(self,systemObj):
@@ -28,13 +30,14 @@ class Subsystem(object):
         '''
         self.System = systemObj
 
+
     def getSystem(self):
         '''
         Returns the System object in which the Subsystem is placed.
         '''
         return self.System
 
-    def renameSName(self, old_name, new_name):
+    def renameSName(self, ListOfOldNames, new_name):
         '''
         Search the SBMLDocument for the oldName and rename all such 
         components by the newName
@@ -42,15 +45,29 @@ class Subsystem(object):
         model = self.getSubsystemDoc().getModel()
         check(model,'retreiving model from document in renameSName')
         mod_obj = SimpleModel(model)
-        species = mod_obj.getSpeciesByName(old_name)
-        if species == None:
-            print('No species named' + old_name + 'found.')
-            return
-        if type(species) is list:
-            for sp in species:
-                check(sp.setName(new_name), 'setting the new name from rename to the list of species')
+        names = []
+        if type(ListOfOldNames) is str:
+            names.append(ListOfOldNames)
+        elif type(ListOfOldNames) is list:
+            names = ListOfOldNames[:]
         else:
-            check(species.setName(new_name), 'setting new name from rename function call')
+            raise SyntaxError('The ListOfOldNames argument should either be a string or a list of strings')
+        
+        if type(new_name) is not str:
+            raise SyntaxError('The new name attribute should be a string')
+
+        for old_name in names:
+            if type(old_name) is not str:
+                raise SyntaxError('All species names should be string type')
+            species = mod_obj.getSpeciesByName(old_name)
+            if species == None:
+                raise SyntaxError('No species named' + old_name + 'found.')
+            if type(species) is list:
+                warnings.warn('Multiple species found with the name' + old_name + '. Replacing all.')
+                for sp in species:
+                    check(sp.setName(new_name), 'setting the new name from rename to the list of species')
+            else:
+                check(species.setName(new_name), 'setting new name from rename function call')
 
     def convertSubsystemLevelAndVersion(self, newLevel, newVersion):
         '''
@@ -58,9 +75,15 @@ class Subsystem(object):
         '''
         document = self.getSubsystemDoc()
         check(document,'retreiving document object for subsystem in convert function')
+        if newLevel == document.getLevel() and newVersion == document.getVersion():
+            warnings.warn('The current SBMLDocument level and version are the same as the new level and version given')
+            return
+
         config = ConversionProperties()
         if config != None:
             config.addOption('setLevelAndVersion')
+        else:
+            raise SyntaxError('Failed to call ConversionProperties')
         # Now, need to set the target level and version (to which to convert the document)
         # Use the setTargetNamespaces() object of the ConversionsProperties as follows.
         # First, need to create a new SBMLNamespaces object with the desired (target) level and version
@@ -70,11 +93,18 @@ class Subsystem(object):
         config.setTargetNamespaces(sbmlns)
         # Use the SBMLDocument.convert(ConversionsProperties) syntax to convert
         check(document.convert(config),'converting document level and version')
-        conv_status = document.checkL3v1Compatibility()
+        if newLevel == 3 and newVersion == 1:
+            conv_status = document.checkL3v1Compatibility()
+        elif newLevel == 2 and newVersion == 4:
+            conv_status = document.checkL2v3Compatibility()
+        elif newLevel == 2 and newVersion == 3:
+            conv_status = document.checkL2v3Compatibility()
+        elif newLevel == 2 and newVersion == 2:
+            conv_status = document.checkL2v2Compatibility()
+        elif newLevel == 2 and newVersion == 1:
+            conv_status = document.checkL2v1Compatibility()
         if conv_status != 0:
-            print('SBML Level/Version conversion failed')
-            return
-
+            raise SyntaxError('SBML Level/Version conversion failed')
 
     def renameSId(self, oldSId, newSId): 
         # 
@@ -170,11 +200,14 @@ class Subsystem(object):
         document = self.getSubsystemDoc()
         check(document,'retreiving document from subsystem in suffixAllElements')
         allids = self.getAllIds()
+        if type(name) is not str:
+            raise SyntaxError('The name argument should be string type')
+            
         for oldid in allids:
             if document.getElementBySId(oldid) != None:
                 self.renameSId(oldid, oldid + '_' + name)
 
-        ## Use if want to rename all names too
+        ## Use if want to suffix all Name arguments too
         # elements = document.getListOfAllElements()
         # for element in elements:
         #     if element.isSetName():
@@ -193,8 +226,16 @@ class Subsystem(object):
         check(document,'retreiving document from subsystem in setSubsystemCompartments')
         compartments = document.getModel().getListOfCompartments()
         check(compartments,'retreiving list of compartments in setSubsystemCompartments')
+        if type(newCompartments) is not list:
+            if type(newCompartments) is str:
+                newcomp = newCompartments
+                newCompartments = []
+                newCompartments.append(newcomp)
+            else:
+                raise SyntaxError('The newCompartments argument should be a list of strings or a single string')
+
         if len(compartments) != len(newCompartments):
-            print('Warning : - The number of compartments given is not the same as the number of compartments in the model.') 
+            warnings.warn('The number of compartments given is not the same as the number of compartments in the model.') 
             for i in range(len(newCompartments)):
                 # rename compartment name and id
                 if compartments.get(i).isSetName():
@@ -288,7 +329,7 @@ class Subsystem(object):
             model.setVolumeUnits(mod.getVolumeUnits())
 
    
-    def shareSubsystems(self, ListOfSubsystems, ListOfSharedResources, mode = 'volume', combineCall = False):
+    def shareSubsystems(self, ListOfSubsystems, ListOfSharedResources, mode = 'virtual', combineCall = False):
         '''
         The ListOfSubsystems are merged and all Species are also added to the 
         Subsystem object. The Species in ListOfSharedResources are combined together 
@@ -330,15 +371,20 @@ class Subsystem(object):
                     # Set the list of reactions in the final subsystem. Get the list of
                     # reactions in the input subsystem and set it to final subsystem
                     species_hash_map = {}
+                    species_comp_hash_map = {}
                     for species in mod.getListOfSpecies():
                         ssys_size = 0
                         cumulative_amount = 0
                         species_amount = 0
+                        # species will only be combined if their name argument is same as the list of shared resources
+                        # and if they are in the same compartment
                         species_name = species.getName()
+                        species_name_comp = species.getName() + species.getCompartment()
                         check(species_name,'getting species name in shareSubsystems')
+                        check(species_name_comp,'getting species name in shareSubsystems')
                         if species_name in ListOfSharedResources:
                         # Maintain the dictionary for all species in the input subsystems by their name
-                            species_hash_map[species_name] = species
+                            species_hash_map[species_name_comp] = species
                         else:
                             ssys_size = species.getModel().getCompartment(0).getSize()
                             cumulative_amount = (species.getInitialAmount())*ssys_size
@@ -411,11 +457,13 @@ class Subsystem(object):
                     # reactions in the input subsystem and set it to final subsystem
                     species_hash_map = {}
                     for species in mod.getListOfSpecies():
-                        species_name = species.getName()
+                        species_name = species.getName() 
+                        species_name_comp = species.getName() + species.getCompartment()
                         check(species_name,'getting species name in shareSubsystems')
+                        check(species_name_comp,'getting species name in shareSubsystems')
                         if species_name in ListOfSharedResources:
                         # Maintain the dictionary for all species in the input subsystems by their name
-                            species_hash_map[species_name] = species
+                            species_hash_map[species_name_comp] = species
                         else:
                             check(model.addSpecies(species),'adding species to the model in shareSubsystems')
                     for species_name in species_hash_map:
@@ -460,10 +508,11 @@ class Subsystem(object):
  
 
         # Updating model id
-        check(model.setId('shared_Subsystems_' + mod_id),'setting new model id for shared model')
+        check(model.setId('shared_subsystems_' + mod_id),'setting new model id for shared model')
+        return self.getSubsystemDoc()
 
 
-    def combineSubsystems(self, ListOfSubsystems, combineNames, mode = 'volume'):
+    def combineSubsystems(self, ListOfSubsystems, mode = 'virtual', combineNames = True):
         '''
         The ListOfSubsystems are combined together by adding all Species and combining 
 	    Species with the same name together if combineNames is True. 
@@ -471,14 +520,28 @@ class Subsystem(object):
         is used to share the Species in the list. Other Species are combined depending on 
         the combineNames (True or False)
         '''
+        ListOfListOfSubsystems = []
+        if type(ListOfSubsystems) is not list:
+            raise SyntaxError('When combining subsystems, the ListOfSubsystems argument is expected to be a list of subystems')
+
+        for subsystem in ListOfSubsystems:
+            if type(subsystem) is list:
+                for sub in subsystem:
+                    ListOfListOfSubsystems.append(sub)
+            elif type(subsystem) is Subsystem:
+                ListOfListOfSubsystems.append(subsystem)
+            else:
+                raise SyntaxError('All elements of ListOfSubsystems argument should be Subsystem objects')
+        
+        ListOfSubsystems = []
+        ListOfSubsystems = ListOfListOfSubsystems
+        
         for subsystem in ListOfSubsystems:
             if subsystem.getSystem() != ListOfSubsystems[0].getSystem():
-                print('BioSIMI-Python ERROR -- The Subsystems being combined are not in the same System')
-                return
+                warnings.warn('Not all of the Subsystems being combined are in the same Compartment')
 
         ListOfResources = ListOfSubsystems[0].getSystem().ListOfSharedResources
         self.shareSubsystems(ListOfSubsystems,ListOfResources, mode, True)
-        writeSBML(self.getSubsystemDoc(),'models/DP_IFFL_shared2.xml')
         model = self.getSubsystemDoc().getModel()
         check(model,'retreiving model in combineSubsystems')
         simpleModel = SimpleModel(model)
@@ -489,22 +552,15 @@ class Subsystem(object):
                 total_size = 0
                 for subsystem in ListOfSubsystems:
                     sub_model = subsystem.getSubsystemDoc().getModel()
-                    # check(mod,'retreiving subsystem model in combineSubsystems')
+                    check(sub_model,'retreiving subsystem model in combineSubsystems')
                     mod_id += '_' + sub_model.getId()
                     total_size += sub_model.getCompartment(0).getSize()
-                    # if mod.getNumSpecies() != 0:
-                        # for each_species in mod.getListOfSpecies():
-            #                 if each_species.getName() not in ListOfResources:
-            #                     # ssys_size = each_species.getModel().getCompartment(0).getSize()
-            #                     # cumulative_amount = (each_species.getInitialAmount())*ssys_size
-            #                     # species_amount = cumulative_amount/total_size
-            #                     # check(each_species.setInitialAmount(species_amount),'setting initial amount to cumulative in combineSubsystems False')
-            #                     model.addSpecies(each_species)
 
             # The final species hash map is a dictionary for all the species that will be
             # in the final subsystem.
             if combineNames == True:
                 final_species_hash_map = {}
+                final_species_comp_hash_map = {}
                 final_reaction_map = {}
                 total_size = 0
                 # final_parameter_map = {}
@@ -512,12 +568,14 @@ class Subsystem(object):
                     sub_model = subsystem.getSubsystemDoc().getModel()
                     total_size += sub_model.getCompartment(0).getSize()
                     mod_id += '_' + sub_model.getId()
-                    # Finding duplicate species by name
+                    # Finding duplicate species by name and compartment
                     species_hash_map = {}
+                    species_comp_hash_map = {}
                     for species in sub_model.getListOfSpecies():
                         if species.getName() not in ListOfResources:
-                        # Maintain the dictionary for all species in the input subsystems by their name
+                        # Maintain the dictionary for all species in the subsystems by their name and compartment they are in
                             species_hash_map[species.getName()] = species
+                            species_comp_hash_map[species.getName() + species.getCompartment()] = species
                     for species_name in species_hash_map:
                         if final_species_hash_map.get(species_name):
                             #If the final hash map already has that species then append to
@@ -529,6 +587,18 @@ class Subsystem(object):
                             # hash map, save them to the final hash map dictionary.
                             final_species_hash_map[species_name] = [
                                 species_hash_map[species_name]]
+
+                    for species_comp in species_comp_hash_map:
+                        if final_species_comp_hash_map.get(species_comp):
+                            #If the final hash map already has that species then append to
+                            # the same instead of duplicating
+                            final_species_comp_hash_map[species_comp].append(
+                                species_comp_hash_map[species_comp])
+                        else:
+                            # For all the species in the dictionary not already in the final
+                            # hash map, save them to the final hash map dictionary.
+                            final_species_comp_hash_map[species_comp] = [
+                                species_comp_hash_map[species_comp]]
 
                     # Finding duplicate reactions by the reaction string
                     reaction_map = {}
@@ -590,10 +660,25 @@ class Subsystem(object):
                                 if status != None:
                                     print('BioSIMI-Python WARNING -- Removing all duplicates of the reaction {0} in the combined model. Check the reaction rate to ensure model is consistent.'.format(rxn_str))
 
-                # Removing duplicate species 
+                # Removing duplicate species in the same compartment
                 for unique_species_name in final_species_hash_map:
                     cumulative_amount = 0
                     if len(final_species_hash_map[unique_species_name]) > 1: 
+                        comp_dict = {}
+                        for species in final_species_hash_map[unique_species_name]:
+                            if comp_dict.get(species.getId()):
+                                comp_dict[species.getId()].append(species.getCompartment())
+                            else:
+                                comp_dict[species.getId()] = [species.getCompartment()]
+                        for spe_id in comp_dict:
+                            if len(comp_dict[spe_id]) > 1:
+                                # multiple compartments for a species
+                                oldid = spe_id
+                                allids = self.getAllIds()
+                                trans = SetIdFromNames(allids)
+                                newid = trans.getValidIdForName(spe_id)
+                                self.renameSId(oldid, newid)
+
                         uni_sp = final_species_hash_map[unique_species_name][0]
                             # For any species with same name 
                             # which were present in more than one subsystem
@@ -639,31 +724,30 @@ class Subsystem(object):
                 total_size = 0
                 for subsystem in ListOfSubsystems:
                     mod = subsystem.getSubsystemDoc().getModel()
-                    total_size += mod.getCompartment(0).getSize()
                     check(mod,'retreiving subsystem model in combineSubsystems')
                     mod_id += '_' + mod.getId()
-                    # if mod.getNumSpecies() != 0:
-                    #     for each_species in mod.getListOfSpecies():
-                    #         if each_species.getName() not in ListOfResources:
-                    #             model.addSpecies(each_species)
+                    total_size += mod.getCompartment(0).getSize()
 
             # The final species hash map is a dictionary for all the species that will be
             # in the final subsystem.
             if combineNames == True:
                 final_species_hash_map = {}
+                final_species_comp_hash_map = {}
                 final_reaction_map = {}
-                final_parameter_map = {}
                 total_size = 0
+                # final_parameter_map = {}
                 for subsystem in ListOfSubsystems:
                     sub_model = subsystem.getSubsystemDoc().getModel()
                     total_size += sub_model.getCompartment(0).getSize()
                     mod_id += '_' + sub_model.getId()
-                    # Finding duplicate species by name
+                    # Finding duplicate species by name and compartment
                     species_hash_map = {}
+                    species_comp_hash_map = {}
                     for species in sub_model.getListOfSpecies():
                         if species.getName() not in ListOfResources:
                         # Maintain the dictionary for all species in the input subsystems by their name
                             species_hash_map[species.getName()] = species
+                            species_comp_hash_map[species.getName() + species.getCompartment()] = species
                     for species_name in species_hash_map:
                         if final_species_hash_map.get(species_name):
                             #If the final hash map already has that species then append to
@@ -675,6 +759,18 @@ class Subsystem(object):
                             # hash map, save them to the final hash map dictionary.
                             final_species_hash_map[species_name] = [
                                 species_hash_map[species_name]]
+
+                    for species_comp in species_comp_hash_map:
+                        if final_species_comp_hash_map.get(species_comp):
+                            #If the final hash map already has that species then append to
+                            # the same instead of duplicating
+                            final_species_comp_hash_map[species_comp].append(
+                                species_comp_hash_map[species_comp])
+                        else:
+                            # For all the species in the dictionary not already in the final
+                            # hash map, save them to the final hash map dictionary.
+                            final_species_comp_hash_map[species_comp] = [
+                                species_comp_hash_map[species_comp]]
 
                     # Finding duplicate reactions by the reaction string
                     reaction_map = {}
@@ -706,14 +802,14 @@ class Subsystem(object):
                             final_reaction_map[rStr] = [reaction_map[rStr]]
                 
                     # Finding duplicate parameters by name and value
-                    parameter_map = {}
-                    for param in sub_model.getListOfParameters():
-                        parameter_map[param.getName()] = param
-                    for param_name in parameter_map:
-                        if final_parameter_map.get(param_name):
-                            final_parameter_map[param_name].append(parameter_map[param_name])
-                        else:
-                            final_parameter_map[param_name] = [parameter_map[param_name]]
+                    # parameter_map = {}
+                    # for param in sub_model.getListOfParameters():
+                    #     parameter_map[param.getName()] = param
+                    # for param_name in parameter_map:
+                    #     if final_parameter_map.get(param_name):
+                    #         final_parameter_map[param_name].append(parameter_map[param_name])
+                    #     else:
+                    #         final_parameter_map[param_name] = [parameter_map[param_name]]
 
                 # Removing duplicate global parameters and adding only one
                 # for param_name in final_parameter_map:
@@ -739,8 +835,23 @@ class Subsystem(object):
                 # Removing duplicate species and adding only one
                 for unique_species_name in final_species_hash_map:
                     if len(final_species_hash_map[unique_species_name]) > 1: 
-                            # For any species with same name 
-                            # which were present in more than one subsystem
+                        comp_dict = {}
+                        for species in final_species_hash_map[unique_species_name]:
+                            if comp_dict.get(species.getId()):
+                                comp_dict[species.getId()].append(species.getCompartment())
+                            else:
+                                comp_dict[species.getId()] = [species.getCompartment()]
+                        for spe_id in comp_dict:
+                            if len(comp_dict[spe_id]) > 1:
+                                # multiple compartments for a species
+                                oldid = spe_id
+                                allids = self.getAllIds()
+                                trans = SetIdFromNames(allids)
+                                newid = trans.getValidIdForName(spe_id)
+                                self.renameSId(oldid, newid)
+
+                        # For any species with same name 
+                        # which were present in more than one subsystem
                         count = 0
                         for i in final_species_hash_map[unique_species_name]:
                             model.addSpecies(i)
@@ -762,11 +873,45 @@ class Subsystem(object):
         
             check(model.getCompartment(0).setSize(total_size), 'setting compartment size in model')
         # Updating model id
-        check(model.setId('combined_Subsystems_' + mod_id),'setting new model id for shared model')
+        check(model.setId('combined_subsystems_' + mod_id),'setting new model id for shared model')
+        return self.getSubsystemDoc()
+
+    
+    def combineSystems(self, ListOfSystems, mode = 'virtual'):
+        ListOfAllSubsystems = []
+        if type(ListOfSystems) is not list:
+            raise SyntaxError('The argument ListOfSystems should be a list of System objects')
+        for sys in ListOfSystems:
+            if type(sys) is not System:
+                raise SyntaxError('All items of ListOfSystems argument should be System objects')
+            ListOfAllSubsystems.append(sys.ListOfInternalSubsystems)
+            ListOfAllSubsystems.append(sys.ListOfExternalSubsystems)
+            ListOfAllSubsystems.append(sys.ListOfMembraneSubsystems)
+        # Flatten the list out
+        ListOfSubsystems = []
+        for sublist in ListOfAllSubsystems:
+            for sub in sublist:
+                if type(sub) is Subsystem:
+                    ListOfSubsystems.append(sub)
+                elif type(sub) is list:
+                    for s in sub:
+                        if type(s) is not Subsystem:
+                            raise SyntaxError('All items in list of subsystems should be Subsystem objects')
+                        ListOfSubsystems.append(s)
+                else:
+                    raise SyntaxError('All items in list of subsystems should be Subsystem object')
+                    
+        # Remove duplicate elements from ListOfSubsystems
+        subsystem_list_final = []
+        for subsytem in ListOfSubsystems:
+            if subsystem not in subsystem_list_final:
+                subsystem_list_final.append(subsystem)
+        self.combineSubsystems(subsystem_list_final, mode)
+        return self.getSubsystemDoc()
 
 
   
-    def connectSubsystems(self, ListOfSubsystems, connectionLogic, mode = 'volume', combineNames = False, inputSpecies = None):
+    def connectSubsystems(self, ListOfSubsystems, connectionLogic, mode = 'volume', combineNames = False, inputSpecies = None, amount_mode = 'additive', connected_species_amount = 0):
         '''
         The ListOfSubsystems are combined together as in combineSubsystems 
         method (depending on combineNames). Additionally, species interaction specified 
@@ -785,20 +930,33 @@ class Subsystem(object):
         if inputSpecies:
             if type(inputSpecies) is list:
                 for inp_sp in inputSpecies:
-                    check(model_obj.getSpeciesByName(inp_sp).setInitialAmount(0.0),'setting initial amount to 0 in connectSubsystem')
+                    sp = model_obj.getSpeciesByName(inp_sp)
+                    if type(sp) is list:
+                        for s_i in sp:
+                            check(s_i.setInitialAmount(0.0),'setting initial amount to 0 in connectSubsystem')
+                    else:
+                        check(sp.setInitialAmount(0.0),'setting initial amount to 0 in connectSubsystem')
             else:
-                check(model_obj.getSpeciesByName(inputSpecies).setInitialAmount(0.0),'setting initial amount to 0 in connectSubsystem')
+                sp = model_obj.getSpeciesByName(inputSpecies)
+                if type(sp) is list:
+                    for s_i in sp:
+                        check(s_i.setInitialAmount(0.0),'setting initial amount to 0 in connectSubsystem')
+                else:
+                    check(sp.setInitialAmount(0.0),'setting initial amount to 0 in connectSubsystem')
+
         for species_name in connectionLogic.keys():
             # Get the ids of the concerned species from the
             # connection logic given by the user
             x = model_obj.getSpeciesByName(species_name)
             y = model_obj.getSpeciesByName(connectionLogic[species_name])
             if type(x) is list or type(y) is list:
-                print('Error : Multiple species exist in the model which have the same name to what is given in the connection map. Make sure that connecting species are unique. Use the renameSName function to rename the species before trying to connect')
-                return
-
+                raise SyntaxError('Multiple species found of the same name as given in the connection map. Make sure that connecting species are unique. Use the renameSName function to rename the species before trying to connect.')
             if x.getCompartment() == y.getCompartment():
-                s = sum([x.getInitialAmount(), y.getInitialAmount()])
+                if amount_mode == 'additive':
+                    s = sum([x.getInitialAmount(), y.getInitialAmount()])
+                elif amount_mode == 'constant':
+                    s = connected_species_amount
+
                 # x and y should also have the same id so that they go into reactions as one.
                 # Also, set the initial amount of the species to be equal to the
                 # sum of their individual amounts
@@ -813,15 +971,11 @@ class Subsystem(object):
                 check(newid,'retreiving newid of y in connectSubsystem')
                 self.renameSId(oldid_x, newid)
                 self.renameSId(oldid_y, newid)
+                self.renameSName(x.getName(),y.getName())
                 # Remove x from species in the model to avoid duplication
-                sp_remove = model_obj.getSpeciesByName(x.getName())
-                if type(sp_remove) is list:
-                    print('BioSIMI-Python WARNING -- Multiple species exist in the model with the same name as given in connection logic. Ensure that connection logic deals with unique species. Simulation may lead to wrong result in this case')
-                    return
-                else:
-                    id_to_remove = sp_remove.getId()
-                    model.removeSpecies(id_to_remove)
-    
+                check(model.removeSpecies(x.getId()),'removing one of the species after connecting')
+        check(model.setId('connected_subsystems_' + model.getId()),'setting new model id for shared model')
+
     def getFastReactions(self):
         '''
         Returns the reactions in the Subsystem with the attribute fast set as True
@@ -1158,3 +1312,6 @@ class Subsystem(object):
         plt.ylabel(ylabel)
         plt.show()
         return final_result, total_time
+
+
+from modules.System import System
