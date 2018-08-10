@@ -341,7 +341,7 @@ class Subsystem(object):
         model_obj = SimpleModel(model)
         mod_id = ''
         total_size = 0
-        if combineCall == False:
+        if not combineCall:
             total_size = self.getSystem().Size
         else:
             for subsystem in ListOfSubsystems:
@@ -371,7 +371,7 @@ class Subsystem(object):
                     # Set the list of reactions in the final subsystem. Get the list of
                     # reactions in the input subsystem and set it to final subsystem
                     species_hash_map = {}
-                    species_comp_hash_map = {}
+                    # species_comp_hash_map = {}
                     for species in mod.getListOfSpecies():
                         ssys_size = 0
                         cumulative_amount = 0
@@ -379,12 +379,12 @@ class Subsystem(object):
                         # species will only be combined if their name argument is same as the list of shared resources
                         # and if they are in the same compartment
                         species_name = species.getName()
-                        species_name_comp = species.getName() + species.getCompartment()
+                        # species_name_comp = species.getName() + species.getCompartment()
                         check(species_name,'getting species name in shareSubsystems')
-                        check(species_name_comp,'getting species name in shareSubsystems')
+                        # check(species_name_comp,'getting species name in shareSubsystems')
                         if species_name in ListOfSharedResources:
                         # Maintain the dictionary for all species in the input subsystems by their name
-                            species_hash_map[species_name_comp] = species
+                            species_hash_map[species_name] = species
                         else:
                             ssys_size = species.getModel().getCompartment(0).getSize()
                             cumulative_amount = (species.getInitialAmount())*ssys_size
@@ -410,9 +410,30 @@ class Subsystem(object):
                 cumulative_amount = 0
                 species_amount = 0
                 if len(final_species_hash_map[unique_species_name]) > 1: 
+                    flag = 0
+                    comp_dict = {}
+                    for species in final_species_hash_map[unique_species_name]:
+                        if comp_dict.get(species.getId()):
+                            comp_dict[species.getId()].append(species.getCompartment())
+                        else:
+                            comp_dict[species.getId()] = [species.getCompartment()]
+                        
+                    for spe_id in comp_dict:
+                        if len(comp_dict[spe_id]) > 1:
+                            # multiple compartments for a species
+                            oldid = spe_id
+                            allids = self.getAllIds()
+                            trans = SetIdFromNames(allids)
+                            newid = trans.getValidIdForName(spe_id)
+                            self.renameSId(oldid, newid)
+                            flag = 1
+                    # we don't want these species to be combined
+                    if flag:
+                        continue
+
                     uni_sp = final_species_hash_map[unique_species_name][0]
-                        # For any species with same name 
-                        # which were present in more than one subsystem
+                    # For any species with same name 
+                    # which were present in more than one subsystem
                     count = 0
                     for i in final_species_hash_map[unique_species_name]:
                         ssys_size = i.getModel().getCompartment(0).getSize()
@@ -458,12 +479,12 @@ class Subsystem(object):
                     species_hash_map = {}
                     for species in mod.getListOfSpecies():
                         species_name = species.getName() 
-                        species_name_comp = species.getName() + species.getCompartment()
+                        # species_name_comp = species.getName() + species.getCompartment()
                         check(species_name,'getting species name in shareSubsystems')
-                        check(species_name_comp,'getting species name in shareSubsystems')
+                        # check(species_name_comp,'getting species name in shareSubsystems')
                         if species_name in ListOfSharedResources:
                         # Maintain the dictionary for all species in the input subsystems by their name
-                            species_hash_map[species_name_comp] = species
+                            species_hash_map[species_name] = species
                         else:
                             check(model.addSpecies(species),'adding species to the model in shareSubsystems')
                     for species_name in species_hash_map:
@@ -483,8 +504,29 @@ class Subsystem(object):
             for unique_species_name in final_species_hash_map:
                 cumulative_amount = 0
                 if len(final_species_hash_map[unique_species_name]) > 1: 
-                        # For any species with same name 
-                        # which were present in more than one subsystem
+                    # For any species with same name 
+                    # which were present in more than one subsystem
+                    flag = 0
+                    comp_dict = {}
+                    for species in final_species_hash_map[unique_species_name]:
+                        if comp_dict.get(species.getId()):
+                            comp_dict[species.getId()].append(species.getCompartment())
+                        else:
+                            comp_dict[species.getId()] = [species.getCompartment()]
+                        
+                    for spe_id in comp_dict:
+                        if len(comp_dict[spe_id]) > 1:
+                            # multiple compartments for a species
+                            oldid = spe_id
+                            allids = self.getAllIds()
+                            trans = SetIdFromNames(allids)
+                            newid = trans.getValidIdForName(spe_id)
+                            self.renameSId(oldid, newid)
+                            flag = 1
+                    # we don't want these species to be combined
+                    if flag:
+                        continue
+
                     count = 0
                     for i in final_species_hash_map[unique_species_name]:
                         check(model.addSpecies(i),'add species to model in shareSubsystems')
@@ -535,12 +577,19 @@ class Subsystem(object):
         
         ListOfSubsystems = []
         ListOfSubsystems = ListOfListOfSubsystems
-        
+        flag = 0
         for subsystem in ListOfSubsystems:
             if subsystem.getSystem() != ListOfSubsystems[0].getSystem():
-                warnings.warn('Not all of the Subsystems being combined are in the same Compartment')
+                flag += 1
+            if type(subsystem) is not Subsystem:
+                raise SyntaxError('All objects in ListOfSubsystems input argument list should be of Subsystem class')
+        if not flag:
+            ListOfResources = ListOfSubsystems[0].getSystem().ListOfSharedResources
+        else:
+            ListOfResources = []
+            warnings.warn('Not all of the Subsystems being combined are in the same Compartment')
 
-        ListOfResources = ListOfSubsystems[0].getSystem().ListOfSharedResources
+
         self.shareSubsystems(ListOfSubsystems,ListOfResources, mode, True)
         model = self.getSubsystemDoc().getModel()
         check(model,'retreiving model in combineSubsystems')
@@ -560,7 +609,7 @@ class Subsystem(object):
             # in the final subsystem.
             if combineNames == True:
                 final_species_hash_map = {}
-                final_species_comp_hash_map = {}
+                # final_species_comp_hash_map = {}
                 final_reaction_map = {}
                 total_size = 0
                 # final_parameter_map = {}
@@ -570,12 +619,12 @@ class Subsystem(object):
                     mod_id += '_' + sub_model.getId()
                     # Finding duplicate species by name and compartment
                     species_hash_map = {}
-                    species_comp_hash_map = {}
+                    # species_comp_hash_map = {}
                     for species in sub_model.getListOfSpecies():
                         if species.getName() not in ListOfResources:
                         # Maintain the dictionary for all species in the subsystems by their name and compartment they are in
                             species_hash_map[species.getName()] = species
-                            species_comp_hash_map[species.getName() + species.getCompartment()] = species
+                            # species_comp_hash_map[species.getName() + species.getCompartment()] = species
                     for species_name in species_hash_map:
                         if final_species_hash_map.get(species_name):
                             #If the final hash map already has that species then append to
@@ -588,17 +637,17 @@ class Subsystem(object):
                             final_species_hash_map[species_name] = [
                                 species_hash_map[species_name]]
 
-                    for species_comp in species_comp_hash_map:
-                        if final_species_comp_hash_map.get(species_comp):
-                            #If the final hash map already has that species then append to
-                            # the same instead of duplicating
-                            final_species_comp_hash_map[species_comp].append(
-                                species_comp_hash_map[species_comp])
-                        else:
-                            # For all the species in the dictionary not already in the final
-                            # hash map, save them to the final hash map dictionary.
-                            final_species_comp_hash_map[species_comp] = [
-                                species_comp_hash_map[species_comp]]
+                    # for species_comp in species_comp_hash_map:
+                    #     if final_species_comp_hash_map.get(species_comp):
+                    #         #If the final hash map already has that species then append to
+                    #         # the same instead of duplicating
+                    #         final_species_comp_hash_map[species_comp].append(
+                    #             species_comp_hash_map[species_comp])
+                    #     else:
+                    #         # For all the species in the dictionary not already in the final
+                    #         # hash map, save them to the final hash map dictionary.
+                    #         final_species_comp_hash_map[species_comp] = [
+                    #             species_comp_hash_map[species_comp]]
 
                     # Finding duplicate reactions by the reaction string
                     reaction_map = {}
@@ -648,7 +697,7 @@ class Subsystem(object):
                 #             if ind > 0:
                 #                 model.removeParameter(i.getId())
                 #         # model.addParameter(uni_param)
-                #         print('BioSIMI-Python WARNING -- Removing all duplicates of global parameter {0} in the combined model. Check the value to ensure model is consistent.'.format(param_name))
+                #         warnings.warn('Removing all duplicates of global parameter {0} in the combined model. Check the value to ensure model is consistent.'.format(param_name))
                         
                 # Removing duplicate reactions and adding only one
                 for rxn_str in final_reaction_map:
@@ -658,12 +707,13 @@ class Subsystem(object):
                             if ind > 0:
                                 status = model.removeReaction(i.getId())
                                 if status != None:
-                                    print('BioSIMI-Python WARNING -- Removing all duplicates of the reaction {0} in the combined model. Check the reaction rate to ensure model is consistent.'.format(rxn_str))
+                                    warnings.warn('Removing all duplicates of the reaction {0} in the combined model. Check the reaction rate to ensure model is consistent.'.format(rxn_str))
 
                 # Removing duplicate species in the same compartment
                 for unique_species_name in final_species_hash_map:
                     cumulative_amount = 0
                     if len(final_species_hash_map[unique_species_name]) > 1: 
+                        flag = 0 
                         comp_dict = {}
                         for species in final_species_hash_map[unique_species_name]:
                             if comp_dict.get(species.getId()):
@@ -678,7 +728,11 @@ class Subsystem(object):
                                 trans = SetIdFromNames(allids)
                                 newid = trans.getValidIdForName(spe_id)
                                 self.renameSId(oldid, newid)
+                                flag = 1
 
+                        if flag:
+                            continue
+                           
                         uni_sp = final_species_hash_map[unique_species_name][0]
                             # For any species with same name 
                             # which were present in more than one subsystem
@@ -732,7 +786,7 @@ class Subsystem(object):
             # in the final subsystem.
             if combineNames == True:
                 final_species_hash_map = {}
-                final_species_comp_hash_map = {}
+                # final_species_comp_hash_map = {}
                 final_reaction_map = {}
                 total_size = 0
                 # final_parameter_map = {}
@@ -742,12 +796,12 @@ class Subsystem(object):
                     mod_id += '_' + sub_model.getId()
                     # Finding duplicate species by name and compartment
                     species_hash_map = {}
-                    species_comp_hash_map = {}
+                    # species_comp_hash_map = {}
                     for species in sub_model.getListOfSpecies():
                         if species.getName() not in ListOfResources:
                         # Maintain the dictionary for all species in the input subsystems by their name
                             species_hash_map[species.getName()] = species
-                            species_comp_hash_map[species.getName() + species.getCompartment()] = species
+                            # species_comp_hash_map[species.getName() + species.getCompartment()] = species
                     for species_name in species_hash_map:
                         if final_species_hash_map.get(species_name):
                             #If the final hash map already has that species then append to
@@ -760,17 +814,17 @@ class Subsystem(object):
                             final_species_hash_map[species_name] = [
                                 species_hash_map[species_name]]
 
-                    for species_comp in species_comp_hash_map:
-                        if final_species_comp_hash_map.get(species_comp):
-                            #If the final hash map already has that species then append to
-                            # the same instead of duplicating
-                            final_species_comp_hash_map[species_comp].append(
-                                species_comp_hash_map[species_comp])
-                        else:
-                            # For all the species in the dictionary not already in the final
-                            # hash map, save them to the final hash map dictionary.
-                            final_species_comp_hash_map[species_comp] = [
-                                species_comp_hash_map[species_comp]]
+                    # for species_comp in species_comp_hash_map:
+                    #     if final_species_comp_hash_map.get(species_comp):
+                    #         #If the final hash map already has that species then append to
+                    #         # the same instead of duplicating
+                    #         final_species_comp_hash_map[species_comp].append(
+                    #             species_comp_hash_map[species_comp])
+                    #     else:
+                    #         # For all the species in the dictionary not already in the final
+                    #         # hash map, save them to the final hash map dictionary.
+                    #         final_species_comp_hash_map[species_comp] = [
+                    #             species_comp_hash_map[species_comp]]
 
                     # Finding duplicate reactions by the reaction string
                     reaction_map = {}
@@ -820,7 +874,7 @@ class Subsystem(object):
                 #             if ind > 0:
                 #                 model.removeParameter(i.getId())
                 #         # model.addParameter(uni_param)
-                #         print('BioSIMI-Python WARNING -- Removing all duplicates of global parameter {0} in the combined model. Check the value to ensure model is consistent.'.format(param_name))
+                #         warnings.warn('Removing all duplicates of global parameter {0} in the combined model. Check the value to ensure model is consistent.'.format(param_name))
                         
                 # Removing duplicate reactions and adding only one
                 for rxn_str in final_reaction_map:
@@ -830,11 +884,12 @@ class Subsystem(object):
                             if ind > 0:
                                 status = model.removeReaction(i.getId())
                                 if status != None:
-                                    print('BioSIMI-Python WARNING -- Removing all duplicates of the reaction {0} in the combined model. Check the reaction rate to ensure model is consistent.'.format(rxn_str))
+                                    warnings.warn('Removing all duplicates of the reaction {0} in the combined model. Check the reaction rate to ensure model is consistent.'.format(rxn_str))
 
                 # Removing duplicate species and adding only one
                 for unique_species_name in final_species_hash_map:
                     if len(final_species_hash_map[unique_species_name]) > 1: 
+                        flag = 0
                         comp_dict = {}
                         for species in final_species_hash_map[unique_species_name]:
                             if comp_dict.get(species.getId()):
@@ -849,6 +904,10 @@ class Subsystem(object):
                                 trans = SetIdFromNames(allids)
                                 newid = trans.getValidIdForName(spe_id)
                                 self.renameSId(oldid, newid)
+                                flag = 1
+                        # we don't want these species to be combined
+                        if flag:
+                            continue
 
                         # For any species with same name 
                         # which were present in more than one subsystem
@@ -876,39 +935,7 @@ class Subsystem(object):
         check(model.setId('combined_subsystems_' + mod_id),'setting new model id for shared model')
         return self.getSubsystemDoc()
 
-    
-    def combineSystems(self, ListOfSystems, mode = 'virtual'):
-        ListOfAllSubsystems = []
-        if type(ListOfSystems) is not list:
-            raise SyntaxError('The argument ListOfSystems should be a list of System objects')
-        for sys in ListOfSystems:
-            if type(sys) is not System:
-                raise SyntaxError('All items of ListOfSystems argument should be System objects')
-            ListOfAllSubsystems.append(sys.ListOfInternalSubsystems)
-            ListOfAllSubsystems.append(sys.ListOfExternalSubsystems)
-            ListOfAllSubsystems.append(sys.ListOfMembraneSubsystems)
-        # Flatten the list out
-        ListOfSubsystems = []
-        for sublist in ListOfAllSubsystems:
-            for sub in sublist:
-                if type(sub) is Subsystem:
-                    ListOfSubsystems.append(sub)
-                elif type(sub) is list:
-                    for s in sub:
-                        if type(s) is not Subsystem:
-                            raise SyntaxError('All items in list of subsystems should be Subsystem objects')
-                        ListOfSubsystems.append(s)
-                else:
-                    raise SyntaxError('All items in list of subsystems should be Subsystem object')
-                    
-        # Remove duplicate elements from ListOfSubsystems
-        subsystem_list_final = []
-        for subsytem in ListOfSubsystems:
-            if subsystem not in subsystem_list_final:
-                subsystem_list_final.append(subsystem)
-        self.combineSubsystems(subsystem_list_final, mode)
-        return self.getSubsystemDoc()
-
+  
 
   
     def connectSubsystems(self, ListOfSubsystems, connectionLogic, mode = 'volume', combineNames = False, inputSpecies = None, amount_mode = 'additive', connected_species_amount = 0):
@@ -919,7 +946,7 @@ class Subsystem(object):
         An optional argument that may be used to specify a list of Species which are desired
         inactive in the connected Subsystem
         '''
-        self.combineSubsystems(ListOfSubsystems, combineNames, mode)
+        self.combineSubsystems(ListOfSubsystems, mode, combineNames)
         model = self.getSubsystemDoc().getModel()
         check(model,'retreiving self model in connectSubsystem')
         # The connection logic given by user species two or more different species
@@ -1219,7 +1246,7 @@ class Subsystem(object):
         for species_name in ListOfSpeciesToPlot:
             species = simpleModel.getSpeciesByName(species_name)
             if type(species) is list:
-                print('BioSIMI-Python WARNING -- There are multiple species with the name ' + species_name + 'Suffixed species will be plotted ')
+                warnings.warn('There are multiple species with the name ' + species_name + 'Suffixed species will be plotted ')
                 for species_i in species:
                     species_list.append(species_i.getId())
                     final_result[species_i.getId()] = []
@@ -1243,17 +1270,14 @@ class Subsystem(object):
             elif type(ListOfInputs) is str:
                 input = ListOfInputs
             else:
-                print('BioSIMI-Python ERROR -- The input species argument should either be a list or a string')
-                return
+                raise SyntaxError('The input species argument should either be a list or a string')
 
             species_inp = simpleModel.getSpeciesByName(input)
             if type(species_inp) is list:
-                print('BioSIMI-Python ERROR -- Multiple input species found in the model for the input name given.')
-                return 
+                raise SyntaxError('Multiple input species found in the model for the input name given.')
             for amount in ListOfListOfAmounts:
                 if type(amount) is list:
-                    print('BioSIMI-Python ERROR -- For single input, the amounts should not be a list of list type')
-                    return
+                    raise SyntaxError('For single input, the amounts should not be a list of list type')
             for j in range(len(ListOfListOfAmounts)):
                 # Start simulating and create data
                 amount = ListOfListOfAmounts[j]
@@ -1279,13 +1303,11 @@ class Subsystem(object):
                 input = ListOfInputs[i]
                 species_inp = simpleModel.getSpeciesByName(input)
                 if type(species_inp) is list:
-                    print('BioSIMI-Python ERROR -- Multiple input species found in the model.')
-                    return 
+                    raise SyntaxError('Multiple input species found in the model.')
                 ListOfSpecies.append(species_inp)
             for i in range(len(ListOfListOfAmounts)):
                 if (type(ListOfListOfAmounts[i]) is not list) or (len(ListOfListOfAmounts[i]) != len(ListOfInputs)) :
-                    print('BioSIMI-Python ERROR -- For multiple inputs, all items of ListOfListOfAmounts attribute should be lists of length same as the number of inputs')
-                    return
+                    raise SyntaxError('For multiple inputs, all items of ListOfListOfAmounts attribute should be lists of length same as the number of inputs')
             for j in range(len(ListOfListOfAmounts)):
                 for amount, species in zip(ListOfListOfAmounts[j], ListOfSpecies):
                 # Start simulating and create data
@@ -1313,5 +1335,3 @@ class Subsystem(object):
         plt.show()
         return final_result, total_time
 
-
-from modules.System import System
