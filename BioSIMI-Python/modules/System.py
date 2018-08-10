@@ -76,7 +76,7 @@ class System(object):
         '''
         return self.Size
 
-    def setSharedResources(self, mode = 'volume'):
+    def setSharedResources(self, mode = 'virtual'):
         ''' 
         Returns a new Subsystem object containing the 
         model which shares the self.ListOfSharedResources among 
@@ -84,7 +84,8 @@ class System(object):
         '''
         ListOfResources = self.ListOfSharedResources
         ListOfSubsystems = self.ListOfInternalSubsystems
-        shared_subsystem = self.createNewSubsystem(3,1)
+        shared_subsystem =  createNewSubsystem()
+        shared_subsystem.setSystem(self)
         # Usage - self.shareSubsystems(ListOfSubsystems, ListOfSharedResources)
         shared_subsystem.shareSubsystems(ListOfSubsystems, ListOfResources, mode)
         return shared_subsystem
@@ -102,16 +103,16 @@ class System(object):
         subsystem = Subsystem(sbmlDoc)
         subsystem.setSystem(self)
         if subsystem.getSubsystemDoc().getLevel() != latestLevel or subsystem.getSubsystemDoc().getVersion() != latestVersion:
-            print('BioSIMI-Python WARNING -- Subsystem SBML model is not the latest. Converting to SBML level 3, version 1')
+            warnings.warn('Subsystem SBML model is not the latest. Converting to SBML level 3, version 1')
             subsystem.convertSubsystemLevelAndVersion(latestLevel,latestVersion)
         subsystem.suffixAllElementIds(subsystemName)
         if model.getNumCompartments() == 0:
-            print('BioSIMI-Python WARNING -- No compartments in the Subsystem model, the System compartment will be used. Compartment Size will be set to zero for this Subsystem.')
+            warnings.warn('No compartments in the Subsystem model, the System compartment will be used. Compartment Size will be set to zero for this Subsystem.')
         elif model.getNumCompartments() > 1:
-            print('BioSIMI-Python WARNING -- More than 1 compartments in the Subsystem model. Check resulting models for consistency.')
+            warnings.warn('More than 1 compartments in the Subsystem model. Check resulting models for consistency.')
 
         if not model.getCompartment(0).isSetSize():
-            print('BioSIMI-Python WARNING -- Compartment Size is not set. Setting to one.')
+            warnings.warn('Compartment Size is not set. Setting to one.')
             model.getCompartment(0).setSize(1)
     
         subsystem.setCompartments([name])
@@ -204,15 +205,13 @@ class System(object):
             else:
                 raise SyntaxError('The two compartments of the membrane subsystem must each have a name attribute, with names "internal" and "external"')
 
-
-
     def getModel(self, mode='virtual'):
+        system_sbml = createNewSubsystem()
         internal_subsystems = self.ListOfInternalSubsystems
         external_subsystems = self.ListOfExternalSubsystems
         membranes = self.ListOfMembraneSubsystems
-        system_sbml = createNewSubsystem()
         system_sbml.combineSubsystems([internal_subsystems, external_subsystems, membranes],mode)
-        return system_sbml
+        return system_sbml.getSubsystemDoc()
 
 
 def createNewSubsystem(level = latestLevel, version = latestVersion):
@@ -241,10 +240,44 @@ def createSubsystem(filename, subsystemName = ''):
     if model.getNumCompartments() == 0:
         warnings.warn('No compartments in the Subsystem model, the System compartment will be used. Compartment Size will be set to zero for this Subsystem.')
     elif model.getNumCompartments() > 1:
-        warnings.warn('More than 1 compartments in the Subsystem model. Check resulting models for consistency.')
+        print('The subsystem from ' + filename + ' has multiple compartments')
+        warnings.warn('More than 1 compartments found in the Subsystem model. Check resulting models for consistency.')
 
     if not model.getCompartment(0).isSetSize():
         warnings.warn('Compartment Size attribute is not set. Setting to one.')
         model.getCompartment(0).setSize(1)
 
     return subsystem 
+
+def combineSystems(ListOfSystems, mode = 'virtual'):
+    newSS = createNewSubsystem()
+    ListOfAllSubsystems = []
+    if type(ListOfSystems) is not list:
+        raise SyntaxError('The argument ListOfSystems should be a list of System objects')
+    for sys in ListOfSystems:
+        if type(sys) is not System:
+            raise SyntaxError('All items of ListOfSystems argument should be System objects')
+        ListOfAllSubsystems.append(sys.ListOfInternalSubsystems)
+        ListOfAllSubsystems.append(sys.ListOfExternalSubsystems)
+        ListOfAllSubsystems.append(sys.ListOfMembraneSubsystems)
+    # Flatten the list out
+    ListOfSubsystems = []
+    for sublist in ListOfAllSubsystems:
+        for sub in sublist:
+            if type(sub) is Subsystem:
+                ListOfSubsystems.append(sub)
+            elif type(sub) is list:
+                for s in sub:
+                    if type(s) is not Subsystem:
+                        raise SyntaxError('All items in list of subsystems should be Subsystem objects')
+                    ListOfSubsystems.append(s)
+            else:
+                raise SyntaxError('All items in list of subsystems should be Subsystem object')
+                
+    # Remove duplicate elements from ListOfSubsystems
+    subsystem_list_final = []
+    for subsystem in ListOfSubsystems:
+        if subsystem not in subsystem_list_final:
+            subsystem_list_final.append(subsystem)
+    newSS.combineSubsystems(subsystem_list_final, mode)
+    return newSS.getSubsystemDoc()

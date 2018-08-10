@@ -20,7 +20,7 @@ cell.setMembrane(membrane)
 
 cell_model = cell.getModel()
 
-writeSBML(cell_model.getSubsystemDoc(),'models/cell_transport_model.xml')
+writeSBML(cell_model,'models/cell_transport_model.xml')
 
 timepoints = np.linspace(0,14*60*60,100)
 plotSbmlWithBioscrape('models/cell_transport_model.xml',0,
