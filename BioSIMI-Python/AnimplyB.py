@@ -11,23 +11,23 @@ B0 = cell.createSubsystem('models/B0.xml','B0')
 B1 = cell.createSubsystem('models/B1.xml','B1')
 
 AnB = cell.createSubsystem('models/AnimplyB.xml','AnB')
-writeSBML(AnB.getSubsystemDoc(), 'models/AnimplyB_mod.xml')
+writeSBML(AnB.getSBMLDocument(), 'models/AnimplyB_mod.xml')
 # combined00 = createNewSubsystem(3,1)
 # combined00.combineSubsystems([A0, B0],True, 'virtual')
-# writeSBML(combined00.getSubsystemDoc(),'models/combined00.xml')
+# writeSBML(combined00.getSBMLDocument(),'models/combined00.xml')
 
 # combined01 = createNewSubsystem(3,1)
 # combined01.combineSubsystems([A0,B1],True, 'volume')
-# writeSBML(combined01.getSubsystemDoc(),'models/combined01.xml')
+# writeSBML(combined01.getSBMLDocument(),'models/combined01.xml')
 
 # combined10 = createNewSubsystem(3,1)
 # combined10.combineSubsystems([A1, B0],True, 'volume')
-# writeSBML(combined10.getSubsystemDoc(),'models/combined10.xml')
+# writeSBML(combined10.getSBMLDocument(),'models/combined10.xml')
 
 
 combined11 = createNewSubsystem(3,1)
 combined11.combineSubsystems([A1, B1],True, 'virtual')
-writeSBML(combined11.getSubsystemDoc(),'models/combined11.xml')
+writeSBML(combined11.getSBMLDocument(),'models/combined11.xml')
 
 # Simulate using bioscrape
 t_end = 14*60*60
@@ -54,8 +54,8 @@ timepoints = np.linspace(0, t_end, points)
 # plotSbmlWithBioscrape('models/combined00.xml',0,
 # plotSbmlWithBioscrape('models/combined01.xml',0,
 # plotSbmlWithBioscrape('models/combined10.xml',0,
-# plotSbmlWithBioscrape('models/combined11.xml',0,
-plotSbmlWithBioscrape('models/AnimplyB_mod.xml',0,
+plotSbmlWithBioscrape('models/combined11.xml',0,
+# plotSbmlWithBioscrape('models/AnimplyB_mod.xml',0,
 # plotSbmlWithBioscrape('combined11_mod.xml',0,
 # plotSbmlWithBioscrape('models/connected11.xml',0,
 # timepoints,['protein deGFP*', 'protein tetRdimer'],'Time',

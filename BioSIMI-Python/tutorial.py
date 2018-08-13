@@ -49,7 +49,7 @@ DP1 = cell.createSubsystem('models/DP.xml','DP1')
 # DP1.setSubsystemCompartments(newCompartment)
 
 # (Optional) Write the Subsystem model created to output an SBML file
-# DP1_doc = DP1.getSubsystemDoc()
+# DP1_doc = DP1.getSBMLDocument()
 # writeSBML(DP1_doc,'models/DP1.xml')
 
 # Using the steps shown above, we create two other subsystems - DP2 and IFFL
@@ -58,7 +58,7 @@ DP2 = cell.createSubsystem('models/DP.xml','DP2')
 
 # newCompartment = ['cell_new']
 # DP2.setSubsystemCompartments(newCompartment)
-# writeSBML(DP2.getSubsystemDoc(),'models/DP2.xml')
+# writeSBML(DP2.getSBMLDocument(),'models/DP2.xml')
 
 # Creating an Incoherent Feedforward Loop subsystem 
 IFFL = cell.createSubsystem('models/IFFL.xml','IFFL')
@@ -73,17 +73,17 @@ IFFL = cell.createSubsystem('models/IFFL.xml','IFFL')
 
 # newCompartment = ['cell_new']
 # IFFL.setSubsystemCompartments(newCompartment)
-# IFFL_doc = IFFL.getSubsystemDoc()
+# IFFL_doc = IFFL.getSBMLDocument()
 # writeSBML(IFFL_doc,'models/IFFL.xml')
 
 # Set the list of shared resources to the cell using its member function. Example 1-A
-# Usage - system_obj.setSharedResources(), returns a new Subsystem
+# Usage - system_obj.setSharedResources(), returns a new SBMLDocument object of the Subsystem
 # object (inside the same system object) which has the resources sharing modeled.
 print('Creating shared model and writing to SBML file')
 shared_subsystem = cell.setSharedResources('virtual')
 
 # (Optional) Write the shared document model to SBML file
-writeSBML(shared_subsystem.getSubsystemDoc(),'models/DP_IFFL_shared.xml')
+writeSBML(shared_subsystem,'models/DP_IFFL_shared.xml')
 
 # The combineSubsystems member function implements Example 1-B.
 # Usage - subsystem_object.combineSubsystems(ListOfSubsystems, combineAllWithSameNames)
@@ -94,36 +94,37 @@ writeSBML(shared_subsystem.getSubsystemDoc(),'models/DP_IFFL_shared.xml')
 # names need to be merged and False otherwise. 
 
 print('Creating combined model and writing it to SBML file')
-combined_subsystem = createNewSubsystem()
-combined_subsystem.combineSubsystems([DP1, DP2, IFFL], 'volume', True)
+# combined_subsystem = createNewSubsystem()
+# combined_model = combined_subsystem.combineSubsystems([DP1, DP2, IFFL], 'volume', True)
 
 # (Optional) Write the combined document model to SBML file
-writeSBML(combined_subsystem.getSubsystemDoc(),'models/DP_IFFL_combined.xml')
+# writeSBML(combined_model,'models/DP_IFFL_combined.xml')
 
 # Now, for Example 1-C, the user needs to specify 
 # the map of the interaction modeling that is desired. This map uses species names.
 # User specifies how the systems interact by defining the following map
 # Usage - connection_logic is a dictionary specifying the map. 
-# The species in the key is replaced by the species given as the value 
+# Two different species can be combined by defining the following map
 connection_logic = {}
 connection_logic['X:P:P'] = 'pA_IFFL'
 # DP2.renameSName('out','out_DP2')
 # connection_logic['out_DP2'] = 'pB_IFFL'
 
-# (Optional) The following species was used in IFFL model for when its isolated.
-# But, now DP output activates the protein expressions so the input to IFFL should be invalid. 
-inputSpecies = 'inp_IFFL' #The species which is invalid in the connected model
 
 # Call connectInteraction function for the final subsystem object
 # to connect various subsystems.
-# Usage - subsystem_object.self.connectSubsystems(ListOfSubsystems, combineAllWithSameNames, InteractionMap, InputSpecies)
+# Usage - subsystem_object.self.connectSubsystems(ListOfSubsystems, connectionMap, mode, combineAllWithSameNames, amount)
 print('Creating connected model and writing  to SBML file')
-connected_subsystem = cell.createNewSubsystem(3,1)
-connected_subsystem.connectSubsystems([DP1, DP2, IFFL], connection_logic, 'virtual', True, inputSpecies)
+connected_subsystem = createNewSubsystem()
+connected_subsystem.connectSubsystems([DP1, DP2, IFFL], connection_logic, 'virtual', True, 'constant', 50)
 
+# (Optional Utility Function) Set a new amount of a Species
+# Usage - setSpeciesAmount(self, species, amount)
+# Looks for the species and sets its amount
+connected_subsystem.setSpeciesAmount('inp_IFFL',0)
 
-# (Optional) Write the connected document to SBML file
-writeSBML(connected_subsystem.getSubsystemDoc(),'models/DP_IFFL_connected.xml')
+# (Optional) Write the connected document returned above to a SBML file
+writeSBML(connected_subsystem.getSBMLDocument(),'models/DP_IFFL_connected.xml')
 
 # Simulate using bioscrape
 timepoints = np.linspace(0,50,1000)
@@ -132,6 +133,6 @@ timepoints = np.linspace(0,50,1000)
 
 # plotSbmlWithBioscrape('models/DP_IFFL_shared.xml',0,
 # plotSbmlWithBioscrape('models/DP_IFFL_combined.xml',0,
-plotSbmlWithBioscrape('models/DP_IFFL_connected.xml',0,
-timepoints,['inP','pA_IFFL','pB_IFFL','out_IFFL'],'Time',
-'Input and Output Species',14,14)
+# plotSbmlWithBioscrape('models/DP_IFFL_connected.xml',0,
+# timepoints,['inP','pA_IFFL','pB_IFFL','out_IFFL'],'Time',
+# 'Input and Output Species',14,14)

@@ -1,13 +1,21 @@
+#### Some utility functions which are used in modules.System, modules.Subsystem 
+#### and may be used elsewhere as well
+
 import bioscrape
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from libsbml import *
+
 from modules.SimpleModel import * 
-   
-def createSbmlDoc(newLevel, newVersion):
+
+latestLevel = 3
+latestVersion = 1
+
+def createSbmlDoc(newLevel = latestLevel, newVersion = latestVersion):
     ''' 
-    Creates a new SBMLDocument ojbect of the given newLevel and newVersion
+    Creates a new SBMLDocument ojbect of the given (both optional arguments) newLevel and newVersion
+    Returns the created SBMLDocument
     '''
     try:
         sbmlDoc = SBMLDocument(newLevel, newVersion)

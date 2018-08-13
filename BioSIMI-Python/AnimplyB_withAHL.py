@@ -12,7 +12,7 @@ connection_logic = {}
 connection_logic['inputA'] = 'OC6HSL'
 connection_logic['inputB'] = 'OC12HSL'
 
-simpleModel = SimpleModel(AnB_ss.getSubsystemDoc().getModel())
+simpleModel = SimpleModel(AnB_ss.getSBMLDocument().getModel())
 # switch off the leaky expression by setting the corresponding rate parameters zero
 plux_leaky_param = 'TXTL_PLUX_RNAPbound_F'
 plas_leaky_param = 'TXTL_PLAS_RNAPbound_F'
@@ -24,19 +24,19 @@ check(plas_par.setValue(0), 'setting leaky parameter zero')
 connected = createNewSubsystem(3,1)
 # connected.connectSubsystems([AnB_ss, Input], connection_logic, 'virtual', True)
 connected.connectSubsystems([AnB_ss, Input], connection_logic, 'virtual', True)
-writeSBML(connected.getSubsystemDoc(), 'models/AnBconnected.xml')
+writeSBML(connected.getSBMLDocument(), 'models/AnBconnected.xml')
 # Simulate 00 case
 timepoints = np.linspace(0,14*60*60,2000)
 # plotSbmlWithBioscrape('models/AnBconnected.xml',0,timepoints,['protein tetRdimer', 'protein deGFP*', 'protein lasR', 'protein luxR'])
 
-simpleModel = SimpleModel(connected.getSubsystemDoc().getModel())
+simpleModel = SimpleModel(connected.getSBMLDocument().getModel())
 oc6 = simpleModel.getSpeciesByName('OC6HSL')
 oc12 = simpleModel.getSpeciesByName('OC12HSL')
 
 oc6.setInitialAmount(0)
 oc12.setInitialAmount(500)
 
-writeSBML(connected.getSubsystemDoc(), 'models/AnBconnected01.xml')
+writeSBML(connected.getSBMLDocument(), 'models/AnBconnected01.xml')
 # Simulate 01 case
 timepoints = np.linspace(0,14*60*60,2000)
 # plotSbmlWithBioscrape('models/AnBconnected01.xml',0,timepoints,['protein tetRdimer', 'protein deGFP*', 'protein lasR', 'protein luxR'])
@@ -44,7 +44,7 @@ timepoints = np.linspace(0,14*60*60,2000)
 oc6.setInitialAmount(500)
 oc12.setInitialAmount(0)
 
-writeSBML(connected.getSubsystemDoc(), 'models/AnBconnected10.xml')
+writeSBML(connected.getSBMLDocument(), 'models/AnBconnected10.xml')
 # Simulate 10 case
 timepoints = np.linspace(0,14*60*60,500)
 # plotSbmlWithBioscrape('models/AnBconnected10.xml',0,timepoints,['protein tetRdimer', 'protein deGFP*', 'protein lasR', 'protein luxR'])
@@ -53,7 +53,7 @@ oc6.setInitialAmount(500)
 oc12.setInitialAmount(500)
 
 
-writeSBML(connected.getSubsystemDoc(), 'models/AnBconnected11.xml')
+writeSBML(connected.getSBMLDocument(), 'models/AnBconnected11.xml')
 # Simulate 11 case
 timepoints = np.linspace(0,14*60*60,100)
 plotSbmlWithBioscrape('models/AnBconnected11.xml',0,timepoints,['protein tetRdimer', 'protein deGFP*', 'protein lasR', 'protein luxR'])
