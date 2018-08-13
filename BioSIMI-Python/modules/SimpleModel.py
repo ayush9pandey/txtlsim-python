@@ -1,46 +1,107 @@
 from libsbml import *
-from modules.setIdFromNames import *
-from modules.NewReaction import *
 import warnings
 
+from modules.setIdFromNames import *
+from modules.SimpleReaction import *
+
+latestLevel = 3
+latestVersion = 1
 class SimpleModel(object):
-    """
+    '''
+    The SimpleModel class has methods which help in creating SBML models using simple commands
+    rather than having to depend on libSBML directly which leads to long and tedious code, and difficult for beginners to start with
+    Various other methods available in SimpleModel class are utility functions to help with easier creation of SBML models
        Attributes:
-            Model : Model object  
-    """
+            Model : libSBML Model object  
+    '''
 
     def __init__(self, Model):
+        '''
+        Initialize the SimpleModel object using a libSBML Model object
+        '''
+        check(Model,'initializing SimpleModel class with libSBML Model object')
         self.Model = Model 
 
     def getModel(self):
-        """ Returns the Model object """
+        """
+        Returns the Model object 
+        """
         return self.Model
 
     def setModel(self, Model):
-        """ Set the new Model object """
+        """ 
+        Sets the new libSBML Model object and returns it
+        """
+        check(Model, 'validating Model in setModel')
         self.Model = Model
+        return self.Model
    
-    def createNewUnitDefinition(self, uid, ukind, exponent, scale, multiplier):
+    def createNewUnitDefinition(self, uid, ukind, exponent, scale = 0, multiplier = 1):
         ''' 
         Creates a new UnitDefinition inside the 
-        Model with the given attributes and returns a pointer to the object created
+        Model with the given attributes and returns a pointer to the new libSBML object created
         '''
+        if type(uid) is not str or type(scale) is not int or type(multiplier) is not int:
+            raise ValueError('The arguments are not of expected type. uid must be a string of valid SId format and all others must be integers')
+
         model = self.getModel()
+        check(model,'retreiving libSBML model object')
         unitdef = model.createUnitDefinition()
         check(unitdef, 'create unit definition')
         check(unitdef.setId(uid), 'set unit definition id')
-        unit = unitdef.createUnit()
-        check(unit, 'create unit on unitdef')
-        check(unit.setKind(ukind), 'set unit kind')
-        check(unit.setExponent(exponent), 'set unit exponent')
-        check(unit.setScale(scale), 'set unit scale')
-        check(unit.setMultiplier(multiplier), 'set unit multiplier')
+        #Scale list
+        if type(ukind) is list and type(scale) is not list:
+            scaleList = []
+            for kind in ukind:
+                scaleList.append(scale)
+
+        elif type(ukind) is list and type(scale) is list:
+            if len(ukind) != len(scale):
+                raise ValueError('Lengths of scale and unit kind lists are not equal')
+            scaleList = scale[:]
+
+        # Multiplier list
+        if type(ukind) is list and type(multiplier) is not list:
+            multiplierList = []
+            for kind in ukind:
+                multiplierList.append(multiplier)
+
+        elif type(ukind) is list and type(multiplier) is list:
+            if len(ukind) != len(multiplier):
+                raise ValueError('Lengths of unit kind and multiplier lists are not equal')
+            multiplierList = multiplier[:]
+
+        if type(ukind) is not list:
+            ukind = [ukind]
+            if type(scale) is not int or type(multiplier) is not int:
+                raise ValueError('Scale and multiplier must be integers when there is only one unit kind')
+            scaleList = [scale]
+            multiplierList = [multiplier]
+        if type(exponent) is not list:
+            if type(exponent) is not int:
+                raise ValueError('All exponents should be integers')
+            exponent = [exponent]
+        if len(ukind) != len(exponent):
+            raise ValueError('Lengths of unit kind and unit exponent lists must be equal')
+        
+        for kind, expo, scale, multiplier in zip(ukind, exponent, scaleList, multiplierList):
+            unit = unitdef.createUnit()
+            check(unit, 'create unit on unitdef')
+            check(unit.setKind(kind), 'set unit kind')
+            check(unit.setExponent(expo), 'set unit exponent')
+            check(unit.setScale(scale), 'set unit scale')
+            check(unit.setMultiplier(multiplier), 'set unit multiplier')
+
         return unitdef
 
-    def createNewCompartment(self, cId, cName, cSize, cUnits, cConstant):
+    def createNewCompartment(self, cId, cName, cSize, cUnits, cConstant = True):
         '''
-        Creates a new Compartment in the Model and returns a pointer to the object created
+        Creates a new Compartment in the Model and returns a pointer to the new libSBML object created
         '''
+        if type(cId) is not str or type(cName) is not str or type(cUnits) is not str or type(cConstant) is not bool:
+            raise ValueError('The arguments are not of expected type. cId, cName, and cUnits must be strings and cConstant must be a boolean')
+        if type(cSize) is not float and type(cSize) is not int:
+            raise ValueError('The arguments are not of expected type. cSize must be either an integer or float.')
         model = self.getModel()
         check(model,'retreived model object')
         comp_obj = model.createCompartment()
@@ -55,7 +116,7 @@ class SimpleModel(object):
     def createNewSpecies(self, ListOfSpecies, sComp, ListOfAmounts, sConstant, sSubstance, sBoundary = False, sHasOnlySubstance = False):
         ''' 
         Creates new Species object inside the 
-        Model with the given attributes and returns a pointer to the list of Species object created
+        Model object  with the given attributes and returns a pointer to the list of libSBML Species object created
         '''
         model = self.getModel()
         allIds = self.getAllIds()
@@ -65,12 +126,12 @@ class SimpleModel(object):
         speciesList = []
         if (type(ListOfSpecies) is str) or  (len(ListOfSpecies) == 1):
             if (type(ListOfAmounts) is list) and (len(ListOfAmounts) > 1):
-                raise SyntaxError('The amount cannot be a list of multiple items when only one species is being created')
+                raise ValueError('The amount cannot be a list of multiple items when only one species is being created')
             elif (type(ListOfAmounts) is list) and (len(ListOfAmounts) == 1):
                 amount.append(ListOfAmounts[0])
             elif type(ListOfAmounts) is not list:
                 if not isinstance(ListOfAmounts, (int, float)):
-                    raise SyntaxError('The amount should be a real number corresponding to the species given')
+                    raise ValueError('The amount should be a real number corresponding to the species given')
                 amount.append(ListOfAmounts)
             if type(ListOfSpecies) is str:
                 speciesList.append(ListOfSpecies)
@@ -78,20 +139,22 @@ class SimpleModel(object):
         # Multiple species
         elif (type(ListOfSpecies) is list) and (len(ListOfSpecies) > 1):
             if type(ListOfAmounts) is not list:
-                raise SyntaxError('For multiple species, the initial amounts should be a list of real numbers')
+                raise ValueError('For multiple species, the initial amounts should be a list of real numbers')
             elif len(ListOfSpecies) != len(ListOfAmounts):
-                raise SyntaxError('The length of ListOfSpecies and ListOfAmounts should be the same.')
+                raise ValueError('The length of ListOfSpecies and ListOfAmounts should be the same.')
             else:
                 amount = ListOfAmounts[:]
             for sp_name, sp_amt in zip(ListOfSpecies, amount):
                 if not isinstance(sp_amt, (int, float)):
-                    raise SyntaxError('The amount should be a real number corresponding to the species given')
+                    raise ValueError('The amount should be a real number corresponding to the species given')
                 if not isinstance(sp_name, str):
-                    raise SyntaxError('The species name should be a string.')
+                    raise ValueError('The species name should be a string.')
             speciesList = ListOfSpecies[:]
         else:
-            raise SyntaxError('ListOfSpecies should be a list type with string items and ListOfAmounts should be list type with real numbers')
-
+            raise ValueError('ListOfSpecies should be a list type with string items and ListOfAmounts should be list type with real numbers')
+        
+        if type(sConstant) is not bool or type(sSubstance) is not str:
+            raise ValueError('The argument sConstant must be boolean type and sSubstance must be string type') 
 
         list_s_obj = []
         for sName, sInitial in zip(speciesList, amount):
@@ -114,8 +177,10 @@ class SimpleModel(object):
     def createNewParameter(self, ListOfParameters, ListOfValues, pConstant, pUnit):
         ''' 
         Creates new Parameter object inside the 
-        Model with the given attributes and returns pointer to the list of Parameter object created
+        Model with the given attributes and returns pointer to the list of libSBML Parameter object created
         '''
+        if type(pConstant) is not bool or type(pUnit) is not str:
+            raise ValueError('The argument pConstant must be a boolean type and pUnit must be string type') 
         model = self.getModel()
         allIds = self.getAllIds()
         trans = SetIdFromNames(allIds)
@@ -124,12 +189,12 @@ class SimpleModel(object):
         parametersList = []
         if (type(ListOfParameters) is str) or  (len(ListOfParameters) == 1):
             if (type(ListOfValues) is list) and (len(ListOfValues) > 1):
-                raise SyntaxError('The values cannot be a list of multiple items when only one parameter is being created')
+                raise ValueError('The values cannot be a list of multiple items when only one parameter is being created')
             elif (type(ListOfValues) is list) and (len(ListOfValues) == 1):
                 values.append(ListOfValues[0])
             elif type(ListOfValues) is not list:
                 if not isinstance(ListOfValues, (int, float)):
-                    raise SyntaxError('The values should be a real number corresponding to the parameters given')
+                    raise ValueError('The values should be a real number corresponding to the parameters given')
                 values.append(ListOfValues)
             if type(ListOfParameters) is str:
                 parametersList.append(ListOfParameters)
@@ -137,19 +202,19 @@ class SimpleModel(object):
         # Multiple parameters 
         elif (type(ListOfParameters) is list) and (len(ListOfParameters) > 1):
             if type(ListOfValues) is not list:
-                raise SyntaxError('For multiple parameters, the values should be a list of real numbers')
+                raise ValueError('For multiple parameters, the values should be a list of real numbers')
             elif len(ListOfParameters) != len(ListOfValues):
-                raise SyntaxError('The length of ListOfParameters and ListOfValues should be the same.')
+                raise ValueError('The length of ListOfParameters and ListOfValues should be the same.')
             else:
                 values = ListOfValues[:]
             for p_name, p_val in zip(ListOfParameters, values):
                 if not isinstance(p_val, (int, float)):
-                    raise SyntaxError('The values should be a real number corresponding to the parameter given')
+                    raise ValueError('The values should be a real number corresponding to the parameter given')
                 if not isinstance(p_name, str):
-                    raise SyntaxError('The parameter name should be a string.')
+                    raise ValueError('The parameter name should be a string.')
             parametersList = ListOfParameters[:]
         else:
-            raise SyntaxError('ListOfParameters should be a list type with string items and ListOfValues should be list type with real numbers')
+            raise ValueError('ListOfParameters should be a list type with string items and ListOfValues should be list type with real numbers')
 
 
         list_p_obj = []
@@ -169,25 +234,27 @@ class SimpleModel(object):
     def createNewReaction(self, rId, rStr, rRate, rFast = False, isConstant = False):
         ''' 
         Creates a new Reaction object inside the 
-        Model with the given attributes and returns a pointer to the Reaction object created
+        Model with the given attributes and returns a pointer to the libSBML Reaction object created
         '''
+        if type(rId) is not str or type(rStr) is not str or type(rRate) is not str or type(rFast) is not bool or type(isConstant) is not bool:
+            raise ValueError('The arguments are not of expected type. rId, rStr, rRate must be strings of appropriate valid format and rFast, isConstant must be boolean type')
         model = self.getModel()
         check(model,'retreived model object')
         r_obj = model.createReaction()
         check(r_obj, 'created r_obj reaction')
         check(r_obj.setId(rId), 'set r_obj ID')
         check(r_obj.setFast(rFast), 'set r_obj Fast')
-        newRxn = NewReaction(r_obj)
+        newRxn = SimpleReaction(r_obj)
         reactantList, reactant_stoichList, productList, product_stoichList = newRxn.parseReactionString(rStr)
         for reactant, stoich in zip(reactantList, reactant_stoichList):
             reactant_sp = self.getSpeciesByName(reactant)
             if type(reactant_sp) is list:
-                raise SyntaxError('Multiple species found with the same name.')
+                raise ValueError('Multiple species found with the same name.')
             newRxn.createNewReactant(reactant_sp.getId(), isConstant, stoich)
         for product, stoich in zip(productList, product_stoichList):
             product_sp = self.getSpeciesByName(product)
             if type(product_sp) is list:
-                raise SyntaxError('Multiple species found with the same name.')
+                raise ValueError('Multiple species found with the same name.')
             newRxn.createNewProduct(product_sp.getId(), isConstant, stoich)
         newRxn_math = newRxn.createMath(rRate)
         newRxn.createRate(newRxn_math)
@@ -196,8 +263,10 @@ class SimpleModel(object):
  
     def createNewConstraint(self, formulaString, msg = 'Constraint not satisfied for the model', name = ''):
         '''
-        Creates a new Constraint in the Model and returns a pointer to the object created
+        Creates a new Constraint in the Model and returns a pointer to the libSBML object created
         '''
+        if type(formulaString) is not str or type(msg) is not str:
+            raise ValueError('The arguments are not of expected type. Both formulaString and msg must be strings of valid format')
         model = self.getModel()
         check(model,'retreived model object')
         constr = model.createConstraint()
@@ -214,8 +283,10 @@ class SimpleModel(object):
         trigger_formula, variable_id, assignment_formula, delay_formula = '', 
         priority_formula = '', useValuesFromTriggerTime = True, name = ''):
         '''
-        Creates a new Event in the Model and returns a pointer to the object created
+        Creates a new Event in the Model and returns a pointer to the libSBML object created
         '''
+        if type(id) is not str or type(trigger_persistent) is not bool or trigger_initialValue is not bool or type(trigger_formula) is not str or type(variable_id) is not str or type(assignment_formula) is not str or type(delay_formula) is not str or type(priority_formula) is not str or type(useValuesFromTriggerTime) is not bool or type(name) is not str:
+            raise ValueError('The arguments are not of expected type.') 
         model = self.getModel()
         check(model,'retreived model object')
         e = model.createEvent()
@@ -252,8 +323,10 @@ class SimpleModel(object):
 
     def createNewInitialAssignment(self, symbol, initialAssignment_formula):
         '''
-        Creates a new InitialAssignment in the Model and returns a pointer to the object created
+        Creates a new InitialAssignment in the Model and returns a pointer to the libSBML object created
         '''
+        if type(symbol) is not str or type(initialAssignment_formula) is not str:
+            raise ValueError('The arguments are not of expected type.') 
         model = self.getModel()
         check(model,'retreived model object')
         init_asmt = model.createInitialAssignment()
@@ -265,8 +338,11 @@ class SimpleModel(object):
 
     def createNewAssignmentRule(self, variable_id, assignmentRule_formula):
         '''
-        Creates a new AssignmentRule in the Model and returns a pointer to the object created
+        Creates a new AssignmentRule in the Model and returns a pointer to the libSBML object created
         '''
+        if type(variable_id) is not str or type(assignmentRule_formula) is not str:
+            raise ValueError('The arguments are not of expected type.') 
+
         model = self.getModel()
         check(model,'retreived model object')
         asmt = model.createAssignmentRule()
@@ -277,8 +353,10 @@ class SimpleModel(object):
 
     def createNewRateRule(self, variable_id, rateRule_formula):
         '''
-        Creates a new RateRule in the Model and returns a pointer to the object created
+        Creates a new RateRule in the Model and returns a pointer to the libSBML object created
         '''
+        if type(variable_id) is not str or type(rateRule_formula) is not str:
+            raise ValueError('The arguments are not of expected type.') 
         model = self.getModel()
         check(model,'retreived model object')
         rateRule = model.createRateRule()
@@ -289,8 +367,10 @@ class SimpleModel(object):
 
     def createNewAlgebraicRule(self, variable_id, algebraicRule_formula):
         '''
-        Creates a new AlgebraicRule in the Model and returnsa pointer to the object created
+        Creates a new AlgebraicRule in the Model and returnsa pointer to the libSBML object created
         '''
+        if type(variable_id) is not str or type(algebraicRule_formula) is not str:
+            raise ValueError('The arguments are not of expected type.') 
         model = self.getModel()
         check(model,'retreived model object')
         algbRule = model.createAlgebraicRule()
@@ -301,8 +381,10 @@ class SimpleModel(object):
 
     def createNewFunctionDefinition(self, id, functionDefinition_formula, name = ''):
         '''
-        Creates a new FunctionDefinition in the Model and returns a pointer to the object created
+        Creates a new FunctionDefinition in the Model and returns a pointer to the libSBML object created
         '''
+        if type(id) is not str or type(functionDefinition_formula) is not str or type(name) is not str:
+            raise ValueError('The arguments are not of expected type.') 
         model = self.getModel()
         check(model,'retreived model object')
         func_def = model.createFunctionDefinition()
@@ -319,6 +401,8 @@ class SimpleModel(object):
         ''' 
         Returns a list of species in the Model with the given name
         '''
+        if type(name) is not str:
+            raise ValueError('The arguments are not of expected type.') 
         model = self.getModel()
         check(model,'retreived model object')
         species_found =[]
@@ -328,7 +412,7 @@ class SimpleModel(object):
         if len(species_found) == 1:
             return species_found[0] 
         elif not species_found:
-            raise SyntaxError('The species ' + name + ' not found.')
+            raise ValueError('The species ' + name + ' not found.')
         else:
             warnings.warn('Multiple species with name ' + name + ' found. Returning a list')
             return species_found
@@ -338,6 +422,8 @@ class SimpleModel(object):
         ''' 
         Returns a list of Parameters in the Model with the given name
         '''
+        if type(name) is not str:
+            raise ValueError('The arguments are not of expected type.') 
         model = self.getModel()
         check(model,'retreived model object')
         parameter_found =[]
@@ -355,7 +441,7 @@ class SimpleModel(object):
         if len(parameter_found) == 1:
             return parameter_found[0] 
         elif not parameter_found:
-            raise SyntaxError('The parameter ' + name + ' not found.')
+            raise ValueError('The parameter ' + name + ' not found.')
         else:
             warnings.warn('Multiple parameter with name ' + name + ' found. Returning a list')
             return parameter_found
@@ -377,4 +463,4 @@ class SimpleModel(object):
             if (current.isSetId() and current.getTypeCode() != libsbml.SBML_EVENT and current.getTypeCode() != libsbml.SBML_LOCAL_PARAMETER):
                 result.append(current.getId()) 
         return result     
-    
+ 

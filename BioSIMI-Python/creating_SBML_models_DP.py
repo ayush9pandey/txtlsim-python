@@ -3,7 +3,7 @@
 from modules.System import *
 from modules.Subsystem import *
 from modules.SimpleModel import *
-from modules.NewReaction import *
+from modules.SimpleReaction import *
 
 # Create a System to hold the Subsystems
 cell = System('cell')
@@ -72,11 +72,11 @@ simpleModel.createNewParameter( ['k2f','k3f','k3r','k4f','k5f','k5r','k6f','k7f'
 
 # simpleModel.createNewParameter( 'k8f','k8f',1,False,'per_second')
 
-# Create all reactions using the NewReaction class to call the simple commands to define Reactions
+# Create all reactions using the SimpleReaction class to call the simple commands to define Reactions
 # Arguments - id, isReversible, isFast
-simpleModel.createNewReaction('r1','inP + X <-> inP:X',
+simpleModel.createSimpleReaction('r1','inP + X <-> inP:X',
 'k1f * inP * X - k1r * inP_X', False, False)
-# r1 = NewReaction(model.createReaction())
+# r1 = SimpleReaction(model.createReaction())
 # # Arguments - species id, isConstant, Stoichiometry
 # r1.createNewReactant('inP',False,1)
 # r1.createNewReactant('X',False,1)
@@ -85,7 +85,7 @@ simpleModel.createNewReaction('r1','inP + X <-> inP:X',
 # r1.createRate(math_r1)
 
 
-r2 = NewReaction(model.createReaction())
+r2 = SimpleReaction(model.createReaction())
 r2.getReaction().setId('r2')
 r2.getReaction().setReversible(False)
 r2.getReaction().setFast(False)
@@ -95,48 +95,48 @@ r2.createNewProduct('X_P',False,1)
 math_r2 = r2.createMath('k2f * inP_X')
 r2.createRate(math_r2)
 
-simpleModel.createNewReaction('r3','E + X:P <-> E:X:P','k3f * E * X_P - k3r * E_X_P')
-# r3 = NewReaction(simpleModel.createNewReaction('r3',True,False))
+simpleModel.createSimpleReaction('r3','E + X:P <-> E:X:P','k3f * E * X_P - k3r * E_X_P')
+# r3 = SimpleReaction(simpleModel.createSimpleReaction('r3',True,False))
 # r3.createNewReactant('E',False,1)
 # r3.createNewReactant('X_P',False,1)
 # r3.createNewProduct('E_X_P',False,1)
 # math_r3 = r3.createMath('k3f * E * X_P - k3r * E_X_P')
 # r3.createRate(math_r3)
 
-simpleModel.createNewReaction('r4','E:X:P --> E + X','k4f * E_X_P')
-# r4 = NewReaction(simpleModel.createNewReaction('r4',False,False))
+simpleModel.createSimpleReaction('r4','E:X:P --> E + X','k4f * E_X_P')
+# r4 = SimpleReaction(simpleModel.createSimpleReaction('r4',False,False))
 # r4.createNewReactant('E_X_P',False,1)
 # r4.createNewProduct('E',False,1)
 # r4.createNewProduct('X',False,1)
 # math_r4 = r4.createMath('k4f * E_X_P')
 # r4.createRate(math_r4)
 
-simpleModel.createNewReaction('r5','inP + X:P <-> inP:X:P', 'k5f * inP * X_P - k5r * inP_X_P')
-# r5 = NewReaction(simpleModel.createNewReaction('r5',True,False))
+simpleModel.createSimpleReaction('r5','inP + X:P <-> inP:X:P', 'k5f * inP * X_P - k5r * inP_X_P')
+# r5 = SimpleReaction(simpleModel.createSimpleReaction('r5',True,False))
 # r5.createNewReactant('inP',False,1)
 # r5.createNewReactant('X_P',False,1)
 # r5.createNewProduct('inP_X_P',False,1)
 # math_r5 = r5.createMath('k5f * inP * X_P - k5r * inP_X_P')
 # r5.createRate(math_r5)
 
-simpleModel.createNewReaction('r6','inP:X:P --> X:P:P + inP', 'k6f * inP_X_P')
-# r6 = NewReaction(simpleModel.createNewReaction('r6',False,False))
+simpleModel.createSimpleReaction('r6','inP:X:P --> X:P:P + inP', 'k6f * inP_X_P')
+# r6 = SimpleReaction(simpleModel.createSimpleReaction('r6',False,False))
 # r6.createNewReactant('inP_X_P',False,1)
 # r6.createNewProduct('X_P_P',False,1)
 # r6.createNewProduct('inP',False,1)
 # math_r6 = r6.createMath('k6f * inP_X_P')
 # r6.createRate(math_r6)
 
-simpleModel.createNewReaction('r7','E + X:P:P <-> E:X:P:P', 'k7f * E * X_P_P - k7r * E_X_P_P')
-# r7 = NewReaction(simpleModel.createNewReaction('r7',True,False))
+simpleModel.createSimpleReaction('r7','E + X:P:P <-> E:X:P:P', 'k7f * E * X_P_P - k7r * E_X_P_P')
+# r7 = SimpleReaction(simpleModel.createSimpleReaction('r7',True,False))
 # r7.createNewReactant('E',False,1)
 # r7.createNewReactant('X_P_P',False,1)
 # r7.createNewProduct('E_X_P_P',False,1)
 # math_r7 = r7.createMath('k7f * E * X_P_P - k7r * E_X_P_P')
 # r7.createRate(math_r7)
 
-simpleModel.createNewReaction('r8','E:X:P:P --> X:P + E', 'k8f * E_X_P_P')
-# r8 = NewReaction(simpleModel.createNewReaction('r8',False,False))
+simpleModel.createSimpleReaction('r8','E:X:P:P --> X:P + E', 'k8f * E_X_P_P')
+# r8 = SimpleReaction(simpleModel.createSimpleReaction('r8',False,False))
 # r8.createNewReactant('E_X_P_P',False,1)
 # r8.createNewProduct('X_P',False,1)
 # r8.createNewProduct('E',False,1)
@@ -145,7 +145,7 @@ simpleModel.createNewReaction('r8','E:X:P:P --> X:P + E', 'k8f * E_X_P_P')
 
 
 # Write to XML file 
-writeSBML(DP.getSubsystemDoc(),'models/DP.xml')
+writeSBML(DP.getSBMLDocument(),'models/DP.xml')
 
 # Simulate and plot using bioscrape
 timepoints = np.linspace(0, 10, 1000)
@@ -183,7 +183,7 @@ simpleModel.createNewRateRule('k3f','2')
 simpleModel.createNewEvent('ev1',True,True,'k6f<0','k7f','10')
 
 # Write to XML file 
-writeSBML(DP.getSubsystemDoc(),'models/DP_extended.xml')
+writeSBML(DP.getSBMLDocument(),'models/DP_extended.xml')
 
 # Simulate and plot using bioscrape
 timepoints = np.linspace(0, 10, 1000)

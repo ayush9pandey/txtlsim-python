@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
-  <annotation>
-    <SimBiology xmlns="http://www.mathworks.com">
-      <Version Major="5" Minor="5" Point="0"/>
-    </SimBiology>
-  </annotation>
-  <model id="mw57655e33_b0da_4e0d_8be7_9f10a9a0b77c_AnB" name="mix_of_E30VNPRL_E30VNPRL_gene_expression" substanceUnits="substance" timeUnits="second" volumeUnits="volume" areaUnits="area" lengthUnits="metre" extentUnits="substance">
+  <model id="combined_subsystems__mw57655e33_b0da_4e0d_8be7_9f10a9a0b77c_AnB_in_" substanceUnits="count" timeUnits="second" extentUnits="mole">
     <listOfUnitDefinitions>
       <unitDefinition id="volume">
         <listOfUnits>
@@ -22,12 +17,22 @@
           <unit kind="metre" exponent="2" scale="0" multiplier="1"/>
         </listOfUnits>
       </unitDefinition>
+      <unitDefinition id="count">
+        <listOfUnits>
+          <unit kind="dimensionless" exponent="1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="per_second">
+        <listOfUnits>
+          <unit kind="second" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
     </listOfUnitDefinitions>
     <listOfCompartments>
-      <compartment id="cell" name="cell" spatialDimensions="3" size="1" units="volume" constant="true"/>
+      <compartment id="cell" name="cell" spatialDimensions="3" size="2" units="volume" constant="true"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="mwe26f1cb1_86e9_4e5e_9114_02970551aeb9_AnB" name="RNAP_Polymerase" compartment="cell" initialAmount="100.000066666711" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="mwe26f1cb1_86e9_4e5e_9114_02970551aeb9_AnB" name="RNAP" compartment="cell" initialAmount="100.000066666711" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mw41d4d6ad_adcc_4998_9736_211a8e68d45b_AnB" name="Ribo" compartment="cell" initialAmount="30.0000200000133" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mw095e21ea_4cd4_4394_91fc_b2b5764f5556_AnB" name="RecBCD" compartment="cell" initialAmount="5.00000333333556" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mwe269f848_a93f_4ee4_946a_ed61e5a48c84_AnB" name="RNase" compartment="cell" initialAmount="100.000066666711" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
@@ -83,7 +88,7 @@
       <species id="mwf3aa8744_d349_4acd_b6a3_a126d39f0b78_AnB" name="AA:2AGTP:Ribo:RNA utr1--lasR" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mw4db62297_5f1a_4cd2_b49a_612c4ec9b288_AnB" name="term_Ribo:RNA utr1--lasR" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mw7a9edb37_bb57_4176_9eca_4757d50b96ff_AnB" name="protein luxR" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mwf012fe3d_de5f_4f80_a8b0_a999fcca445e_AnB" name="OC6HSL" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="mwf012fe3d_de5f_4f80_a8b0_a999fcca445e_AnB_connected" name="inputA" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mw51f6b144_881b_4e9b_a2c5_386db0664590_AnB" name="OC6HSL:protein luxR" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mwd2a45846_560b_4fbe_8a44_9101f1712765_AnB" name="RNA utr1--luxR" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mw3357fe24_7969_4a9a_9203_7c48c8260e4e_AnB" name="Ribo:RNA utr1--luxR" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
@@ -148,7 +153,7 @@
       <species id="mw702213e9_e07f_4047_a4ef_46198134819f_AnB" name="AA:2AGTP:Ribo:RNA utr1--sigma28:RNase" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mw4d1b0f9e_7105_4e17_8bf7_386aafded37d_AnB" name="term_Ribo:RNA utr1--sigma28:RNase" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mwdfac0584_fa3a_4ac3_b147_8cbb10a2d488_AnB" name="AA:Ribo:RNA utr1--sigma28:RNase" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="mwceff737e_b940_4477_b709_9bda656e37b3_AnB" name="OC12HSL" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="mwceff737e_b940_4477_b709_9bda656e37b3_AnB_connected" name="inputB" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mwdd88c8b3_1ace_4ffb_9665_bacb309abaf4_AnB" name="AGTP:RNAP:DNA plac--utr1--lasR" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mw8273af67_e7e7_49b6_88e8_5317e18838c8_AnB" name="CUTP:RNAP:DNA plac--utr1--lasR" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mwdb8c4048_92db_46d6_b90f_42dedc72532e_AnB" name="AA:Ribo:RNA utr1--lasR" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
@@ -166,6 +171,8 @@
       <species id="mw64f8f5a6_a2af_4120_958c_96fca30c4991_AnB" name="term_Ribo:RNA utr1--luxR:RNase" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mw7fd816fa_5fb6_4482_a9db_b8ab9f62c489_AnB" name="AA:Ribo:RNA utr1--luxR:RNase" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mwe5d0239e_246f_4516_b131_a0069d2a429c_AnB" name="AGTP_USED" compartment="cell" initialAmount="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="inputA__connected" name="inputA" compartment="cell" initialAmount="0" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="inputB__connected" name="inputB" compartment="cell" initialAmount="0" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
     </listOfSpecies>
     <listOfParameters>
       <parameter id="mwcdb2be4d_740e_4578_b3b9_e763438ca817_AnB" name="AGTPdeg_F" value="0" constant="false"/>
@@ -3714,7 +3721,7 @@
       <reaction id="mw0d0d153b_b7e3_467a_b185_80eea4583ee6_AnB" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw7da19d87_d0e3_49ef_9f7f_ee08ddb4a65b_AnB" stoichiometry="1" constant="true"/>
-          <speciesReference species="mwceff737e_b940_4477_b709_9bda656e37b3_AnB" stoichiometry="1" constant="true"/>
+          <speciesReference species="mwceff737e_b940_4477_b709_9bda656e37b3_AnB_connected" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw8545f0a9_d5b7_41ae_8631_f8133e6e48e3_AnB" stoichiometry="1" constant="true"/>
@@ -3727,7 +3734,7 @@
                 <times/>
                 <ci> mw5b2ce326_1d9f_4f30_9a9f_a6c54639f6ed </ci>
                 <ci> mw7da19d87_d0e3_49ef_9f7f_ee08ddb4a65b_AnB </ci>
-                <ci> mwceff737e_b940_4477_b709_9bda656e37b3_AnB </ci>
+                <ci> mwceff737e_b940_4477_b709_9bda656e37b3_AnB_connected </ci>
               </apply>
               <apply>
                 <times/>
@@ -4383,7 +4390,7 @@
       <reaction id="mwb37f8939_ec31_439a_bdac_6a0252b64ce0_AnB" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="mw7a9edb37_bb57_4176_9eca_4757d50b96ff_AnB" stoichiometry="1" constant="true"/>
-          <speciesReference species="mwf012fe3d_de5f_4f80_a8b0_a999fcca445e_AnB" stoichiometry="1" constant="true"/>
+          <speciesReference species="mwf012fe3d_de5f_4f80_a8b0_a999fcca445e_AnB_connected" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mw51f6b144_881b_4e9b_a2c5_386db0664590_AnB" stoichiometry="1" constant="true"/>
@@ -4396,7 +4403,7 @@
                 <times/>
                 <ci> mw2fcac859_8245_41a6_a0ca_eec11635f45e </ci>
                 <ci> mw7a9edb37_bb57_4176_9eca_4757d50b96ff_AnB </ci>
-                <ci> mwf012fe3d_de5f_4f80_a8b0_a999fcca445e_AnB </ci>
+                <ci> mwf012fe3d_de5f_4f80_a8b0_a999fcca445e_AnB_connected </ci>
               </apply>
               <apply>
                 <times/>
