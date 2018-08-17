@@ -285,7 +285,7 @@ class SimpleModel(object):
         '''
         Creates a new Event in the Model and returns a pointer to the libSBML object created
         '''
-        if type(id) is not str or type(trigger_persistent) is not bool or trigger_initialValue is not bool or type(trigger_formula) is not str or type(variable_id) is not str or type(assignment_formula) is not str or type(delay_formula) is not str or type(priority_formula) is not str or type(useValuesFromTriggerTime) is not bool or type(name) is not str:
+        if (type(id) is not str) or (type(trigger_persistent) is not bool) or (type(trigger_initialValue) is not bool) or (type(trigger_formula) is not str) or (type(variable_id) is not str) or (type(assignment_formula) is not str) or (type(delay_formula) is not str) or (type(priority_formula) is not str) or (type(useValuesFromTriggerTime) is not bool) or (type(name) is not str):
             raise ValueError('The arguments are not of expected type.') 
         model = self.getModel()
         check(model,'retreived model object')
