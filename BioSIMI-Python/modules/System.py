@@ -12,7 +12,9 @@ class System(object):
     By default, has two SBML Compratment objects attached to it
     internal and external. The models can be set using the different methods in this class
     '''
-    def __init__(self, SystemName):
+    def __init__(self, SystemName, ListOfInternalSubsystems = [],
+                ListOfExternalSubsystems = [], ListOfMembraneSubsystems = [], 
+                Size = 0, ExternalSystemFlag = False):
         '''
         initialize lists of systems internal, external to the system.
         initialize the membrane subsystem that is attached to the system and its list of subsystem models
@@ -26,7 +28,7 @@ class System(object):
         self.ListOfMembraneSubsystems = [] 
         self.ListOfSharedResources = []
         self.Size = 0
-        self.ExternalSystemFlag = 'external'
+        self.ExternalSystemFlag = False
         self.ExternalSystem = self
     
     def getSystemName(self):
@@ -109,25 +111,19 @@ class System(object):
         if type(system) is not System:
             raise ValueError('The system argument must be a System object')
         self.ExternalSystem = system
+        self.ExternalSystemFlag = True
         return self.ExternalSystem
 
     def getExternalSystem(self):
         '''
         Return the external system (if any) assigned to this system. 
-        Sets the external system flag to 'external' and returns it, if no other System is set as external system to this system
+        Sets the external system flag to False and returns it, if no other System is set as external system to this system
         '''
         if self.ExternalSystem == self:
-            self.ExternalSystemFlag = 'external'
+            self.ExternalSystemFlag = False
             return self.ExternalSystemFlag
         else:
             return self.ExternalSystem
-
-    def getListOfSubsystems(self):
-        ''' 
-        Returns the list of subsystem objects in 
-        the system 
-        '''
-        return self.ListOfInternalSubsystems
     
     def getListOfSharedResources(self):
         ''' 
@@ -272,7 +268,7 @@ class System(object):
             externalSystem = ListOfSubsystems
             self.ListOfExternalSubsystems = externalSystem.ListOfInternalSubsystems
             # For use in setting the external compartment of the membrane of this system equal to the internal of the 'externalSubsystem' variable
-            self.ExternalSystemFlag = 'system'
+            self.ExternalSystemFlag = True
             self.ExternalSystem = externalSystem 
             return self.ListOfExternalSubsystems
         
@@ -299,7 +295,7 @@ class System(object):
 
     def setMembrane(self, subsystem):
         '''
-        Set the list of subsystems in the subsystem argument as the membrane subsystem to this system.
+        Set the subsystem argument as the membrane subsystem to this system.
         Returns the updated list of membrane subsystems of this System
         '''
         if type(subsystem) is not Subsystem:
@@ -313,12 +309,12 @@ class System(object):
             comp1 = model.getCompartment(0)
             comp2 = model.getCompartment(1)
             if comp1.getName() == 'internal' and comp2.getName() == 'external':
-                if self.ExternalSystemFlag == 'system':
+                if self.ExternalSystemFlag == True:
                     subsystem.setCompartments([self.SystemName + '_internal',self.ExternalSystem.SystemName + '_internal'])
                 else:
                     subsystem.setCompartments([self.SystemName + '_internal',self.SystemName + '_external'])
             elif comp2.getName() == 'internal' and comp1.getName() == 'external':
-                if self.ExternalSystemFlag == 'system':
+                if self.ExternalSystemFlag == True:
                     subsystem.setCompartments([self.ExternalSystem.SystemName + '_internal',self.SystemName + '_internal'])
                 else:
                     subsystem.setCompartments([self.SystemName + '_external',self.SystemName + '_internal'])

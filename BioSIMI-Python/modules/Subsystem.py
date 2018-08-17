@@ -36,7 +36,7 @@ class Subsystem(object):
 
     def setSBMLDocument(self, doc):
         '''
-        The sbmlDoc is set as the SBMLDocument of the Subsystem
+        The doc is set as the SBMLDocument of the Subsystem
         Returns the Subsystem object
         '''
         check(doc,'retreiving SBMLDocument object in self.setSBMLDocument')
@@ -226,7 +226,8 @@ class Subsystem(object):
     def suffixAllElementIds(self, name):
         '''
         All elements identifiers in the
-        SBMLDocument of this Subsystem are suffixed with name
+        SBMLDocument of this Subsystem are suffixed with name.
+        Returns the SBMLDocument of the Subsystem.
         '''
         document = self.getSBMLDocument()
         check(document,'retreiving document from subsystem in suffixAllElements')
@@ -961,7 +962,7 @@ class Subsystem(object):
 
 
   
-    def connectSubsystems(self, ListOfSubsystems, connectionMap, mode = 'volume', combineNames = False, amount_mode = 'additive', connected_species_amount = 0):
+    def connectSubsystems(self, ListOfSubsystems, connectionMap, mode = 'virtual', combineNames = False, amount_mode = 'additive', connected_species_amount = 0):
         '''
         The ListOfSubsystems are combined together as in combineSubsystems 
         method (depending on combineNames). Using the map given in connectionMap
@@ -971,7 +972,7 @@ class Subsystem(object):
         Returns the connected SBMLDocument object of this Subsystem
         '''
         self.combineSubsystems(ListOfSubsystems, mode, combineNames)
-        writeSBML(self.getSBMLDocument(),'models/test.xml')
+        writeSBML(self.getSBMLDocument(),'models/test0.xml')
         model = self.getSBMLDocument().getModel()
         check(model,'retreiving self model in connectSubsystem')
         simpleModel = SimpleModel(model)
@@ -993,8 +994,10 @@ class Subsystem(object):
                 newid = oldid + '_connected'
                 self.renameSId(oldid, newid)    
         # Combine the subsystems 
+        writeSBML(self.getSBMLDocument(),'models/test01.xml')
         self.combineToConnectSubsystems(combineNames)
-        writeSBML(self.getSBMLDocument(),'models/test1.xml')
+        writeSBML(self.getSBMLDocument(),'models/test11.xml')
+        self.combineToConnectSubsystems(combineNames)
         # for species_name in connectionMap.keys():
         #     species1 = simpleModel.getSpeciesByName(species_name)
         #     species2 = simpleModel.getSpeciesByName(connectionMap[species_name])
@@ -1012,6 +1015,7 @@ class Subsystem(object):
         #         print(species.getName())
         #         newid = oldid + '_connected'
         #         self.renameSId(oldid, newid)  
+
         # # The connection map specifies two or more different species, that will be combined together
         # for species_name in connectionMap.keys():
         #     # Get the ids of the concerned species from the
@@ -1066,6 +1070,7 @@ class Subsystem(object):
     def setSpeciesAmount(self, inputSpecies, amount):
         '''
         Sets amount of the species with the same name as inputSpecies argument equal to the amount argument
+        Arguments may both be lists of same length.
         Returns the updated SBMLDocument object of this Subsystem.
         '''
         model_obj = SimpleModel(self.getSBMLDocument().getModel())
@@ -1301,10 +1306,10 @@ class Subsystem(object):
                 species.setInitialAmount(0)
         return reducedSubsystem
 
-    def simulateSbmlWithBioscrape(self, initialTime, timepoints):
+    def simulateBioscrape(self, initialTime, timepoints):
         ''' 
-        To simulate SBML model without generating the plot. 
-        Returns the data for all species.
+        To simulate a Subsystem without generating the plot. 
+        Returns the data for all species and bioscrape model object which can be used to find out species indexes.
         '''
         filename = 'models/temp_simulate.xml'
         writeSBML(self.getSBMLDocument(), filename) 
@@ -1316,7 +1321,15 @@ class Subsystem(object):
         result = sim.py_simulate(s, timepoints)
         return result.py_get_result(), m
 
-    def simulateVariableInputs(self, ListOfInputs, ListOfListOfAmounts, ListOfSpeciesToPlot, timepoints, mode = 'continue', xlabel = 'Time', ylabel = 'Concentration (AU)', sizeOfXLabels = 14, sizeOfYLabels = 14):
+    def plotBioscrape(self, ListOfSpeciesToPlot, timepoints, xlabel = 'Time', ylabel = 'Concentration (AU)', sizeOfXLabels = 14, sizeOfYLabels = 14):
+        ''' 
+        To plot a Subsystem model using bioscrape.
+        '''
+        filename = 'models/temp_plot.xml'
+        writeSBML(self.getSBMLDocument(), filename) 
+        plotSbmlWithBioscrape(filename, timepoints[0], timepoints, ListOfSpeciesToPlot, xlabel, ylabel, sizeOfXLabels, sizeOfYLabels)
+    
+    def simulateVariableInputsBioscrape(self, ListOfInputs, ListOfListOfAmounts, ListOfSpeciesToPlot, timepoints, mode = 'continue', xlabel = 'Time', ylabel = 'Concentration (AU)', sizeOfXLabels = 14, sizeOfYLabels = 14):
         ''''
         Simulates the Subsystem model with the input species amounts varying 
         Uses bioscrape to simulate and plots the result
@@ -1369,7 +1382,7 @@ class Subsystem(object):
                 amount = ListOfListOfAmounts[j]
                 check(species_inp.setInitialAmount(amount), 'setting initial amount to input species')
                 time = np.linspace(t,t+t_end,points)
-                data, m = self.simulateSbmlWithBioscrape(t, time)
+                data, m = self.simulateBioscrape(t, time)
                 for species_id in species_list:
                     sp_data = data[:,m.get_species_index(species_id)]
                     t = time[-1]
@@ -1396,7 +1409,7 @@ class Subsystem(object):
                 # Start simulating and create data
                     check(species.setInitialAmount(amount), 'setting initial amount to input species')
                 time = np.linspace(t,t+t_end,points)
-                data, m = self.simulateSbmlWithBioscrape(t, time)
+                data, m = self.simulateBioscrape(t, time)
                 for species_id in species_list:
                     sp_data = data[:,m.get_species_index(species_id)]
                     t = time[-1]

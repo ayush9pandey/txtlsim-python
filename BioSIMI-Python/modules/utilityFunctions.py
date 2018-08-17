@@ -12,18 +12,6 @@ from modules.SimpleModel import *
 latestLevel = 3
 latestVersion = 1
 
-def createSbmlDoc(newLevel = latestLevel, newVersion = latestVersion):
-    ''' 
-    Creates a new SBMLDocument ojbect of the given (both optional arguments) newLevel and newVersion
-    Returns the created SBMLDocument
-    '''
-    try:
-        sbmlDoc = SBMLDocument(newLevel, newVersion)
-    except ValueError:
-        print('Could not create SBMLDocument object')
-        sys.exit(1)
-    return sbmlDoc
-
 
 def getFromXML(filename):
     """ 
