@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
-  <model id="combined_subsystems__DP_DP1_DP_DP2_IFFLmodel" substanceUnits="count" timeUnits="second" extentUnits="mole">
+  <model id="connected_subsystems_combined_subsystems__DP_DP1_DP_DP2_IFFLmodel" substanceUnits="count" timeUnits="second" extentUnits="mole">
     <listOfUnitDefinitions>
       <unitDefinition id="per_second">
         <listOfUnits>
@@ -29,11 +29,11 @@
       <species id="DA_IFFL" name="DA_IFFL" compartment="cell_DP1_combined" initialAmount="50" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="C1_IFFL" name="C1_IFFL" compartment="cell_DP1_combined" initialAmount="0" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mA_IFFL" name="mA_IFFL" compartment="cell_DP1_combined" initialAmount="0" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="pA_IFFL_combined1" name="pA_IFFL" compartment="cell_DP1_combined" initialAmount="0" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="pA_IFFL_connected_with_X_P_P" name="pA_IFFL" compartment="cell_DP1_combined" initialAmount="50" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="C2_IFFL" name="C2_IFFL" compartment="cell_DP1_combined" initialAmount="0" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="DB_IFFL" name="DB_IFFL" compartment="cell_DP1_combined" initialAmount="50" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="mB_IFFL" name="mB_IFFL" compartment="cell_DP1_combined" initialAmount="0" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="pB_IFFL_combined1" name="pB_IFFL" compartment="cell_DP1_combined" initialAmount="0" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="pB_IFFL_connected_with_X_P_P_DP2" name="pB_IFFL" compartment="cell_DP1_combined" initialAmount="50" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="C3_IFFL" name="C3_IFFL" compartment="cell_DP1_combined" initialAmount="0" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="DC_IFFL" name="DC_IFFL" compartment="cell_DP1_combined" initialAmount="50" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
       <species id="C4_IFFL" name="C4_IFFL" compartment="cell_DP1_combined" initialAmount="0" substanceUnits="count" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
@@ -215,7 +215,7 @@
           <speciesReference species="inP_X_P_combined" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="pA_IFFL_combined1" stoichiometry="1" constant="false"/>
+          <speciesReference species="pA_IFFL_connected_with_X_P_P" stoichiometry="1" constant="false"/>
           <speciesReference species="inP_combined" stoichiometry="1" constant="false"/>
         </listOfProducts>
         <kineticLaw>
@@ -231,7 +231,7 @@
       <reaction id="r7_DP1" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="E_combined" stoichiometry="1" constant="false"/>
-          <speciesReference species="pA_IFFL_combined1" stoichiometry="1" constant="false"/>
+          <speciesReference species="pA_IFFL_connected_with_X_P_P" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="E_X_P_P_combined" stoichiometry="1" constant="false"/>
@@ -244,7 +244,7 @@
                 <times/>
                 <ci> k7f_DP1 </ci>
                 <ci> E_combined </ci>
-                <ci> pA_IFFL_combined1 </ci>
+                <ci> pA_IFFL_connected_with_X_P_P </ci>
               </apply>
               <apply>
                 <times/>
@@ -278,7 +278,7 @@
           <speciesReference species="inP_X_P_combined" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="pB_IFFL_combined1" stoichiometry="1" constant="false"/>
+          <speciesReference species="pB_IFFL_connected_with_X_P_P_DP2" stoichiometry="1" constant="false"/>
           <speciesReference species="inP_combined" stoichiometry="1" constant="false"/>
         </listOfProducts>
         <kineticLaw>
@@ -294,7 +294,7 @@
       <reaction id="r7_DP2" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="E_combined" stoichiometry="1" constant="false"/>
-          <speciesReference species="pB_IFFL_combined1" stoichiometry="1" constant="false"/>
+          <speciesReference species="pB_IFFL_connected_with_X_P_P_DP2" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="E_X_P_P_combined" stoichiometry="1" constant="false"/>
@@ -307,7 +307,7 @@
                 <times/>
                 <ci> k7f_DP2 </ci>
                 <ci> E_combined </ci>
-                <ci> pB_IFFL_combined1 </ci>
+                <ci> pB_IFFL_connected_with_X_P_P_DP2 </ci>
               </apply>
               <apply>
                 <times/>
@@ -369,7 +369,7 @@
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mA_IFFL" stoichiometry="1" constant="false"/>
-          <speciesReference species="pA_IFFL_combined1" stoichiometry="1" constant="false"/>
+          <speciesReference species="pA_IFFL_connected_with_X_P_P" stoichiometry="1" constant="false"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -397,21 +397,21 @@
       </reaction>
       <reaction id="r5" reversible="false" fast="false">
         <listOfReactants>
-          <speciesReference species="pA_IFFL_combined1" stoichiometry="1" constant="false"/>
+          <speciesReference species="pA_IFFL_connected_with_X_P_P" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
               <ci> k5f </ci>
-              <ci> pA_IFFL_combined1 </ci>
+              <ci> pA_IFFL_connected_with_X_P_P </ci>
             </apply>
           </math>
         </kineticLaw>
       </reaction>
       <reaction id="r6" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="pA_IFFL_combined1" stoichiometry="1" constant="false"/>
+          <speciesReference species="pA_IFFL_connected_with_X_P_P" stoichiometry="1" constant="false"/>
           <speciesReference species="DB_IFFL" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
@@ -424,7 +424,7 @@
               <apply>
                 <times/>
                 <ci> k6f </ci>
-                <ci> pA_IFFL_combined1 </ci>
+                <ci> pA_IFFL_connected_with_X_P_P </ci>
                 <ci> DB_IFFL </ci>
               </apply>
               <apply>
@@ -460,7 +460,7 @@
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="mB_IFFL" stoichiometry="1" constant="false"/>
-          <speciesReference species="pB_IFFL_combined1" stoichiometry="1" constant="false"/>
+          <speciesReference species="pB_IFFL_connected_with_X_P_P_DP2" stoichiometry="1" constant="false"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -488,21 +488,21 @@
       </reaction>
       <reaction id="r10" reversible="false" fast="false">
         <listOfReactants>
-          <speciesReference species="pB_IFFL_combined1" stoichiometry="1" constant="false"/>
+          <speciesReference species="pB_IFFL_connected_with_X_P_P_DP2" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
               <ci> k10f </ci>
-              <ci> pB_IFFL_combined1 </ci>
+              <ci> pB_IFFL_connected_with_X_P_P_DP2 </ci>
             </apply>
           </math>
         </kineticLaw>
       </reaction>
       <reaction id="r11" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="pB_IFFL_combined1" stoichiometry="1" constant="false"/>
+          <speciesReference species="pB_IFFL_connected_with_X_P_P_DP2" stoichiometry="1" constant="false"/>
           <speciesReference species="DC_IFFL" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
@@ -515,7 +515,7 @@
               <apply>
                 <times/>
                 <ci> k11f </ci>
-                <ci> pB_IFFL_combined1 </ci>
+                <ci> pB_IFFL_connected_with_X_P_P_DP2 </ci>
                 <ci> DC_IFFL </ci>
               </apply>
               <apply>
@@ -529,7 +529,7 @@
       </reaction>
       <reaction id="r12" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="pA_IFFL_combined1" stoichiometry="1" constant="false"/>
+          <speciesReference species="pA_IFFL_connected_with_X_P_P" stoichiometry="1" constant="false"/>
           <speciesReference species="DC_IFFL" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
@@ -542,7 +542,7 @@
               <apply>
                 <times/>
                 <ci> k12f </ci>
-                <ci> pA_IFFL_combined1 </ci>
+                <ci> pA_IFFL_connected_with_X_P_P </ci>
                 <ci> DC_IFFL </ci>
               </apply>
               <apply>
@@ -556,7 +556,7 @@
       </reaction>
       <reaction id="r13" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="pA_IFFL_combined1" stoichiometry="1" constant="false"/>
+          <speciesReference species="pA_IFFL_connected_with_X_P_P" stoichiometry="1" constant="false"/>
           <speciesReference species="C3_IFFL" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
@@ -569,7 +569,7 @@
               <apply>
                 <times/>
                 <ci> k13f </ci>
-                <ci> pA_IFFL_combined1 </ci>
+                <ci> pA_IFFL_connected_with_X_P_P </ci>
                 <ci> C3_IFFL </ci>
               </apply>
               <apply>
@@ -583,7 +583,7 @@
       </reaction>
       <reaction id="r14" reversible="true" fast="false">
         <listOfReactants>
-          <speciesReference species="pB_IFFL_combined1" stoichiometry="1" constant="false"/>
+          <speciesReference species="pB_IFFL_connected_with_X_P_P_DP2" stoichiometry="1" constant="false"/>
           <speciesReference species="C4_IFFL" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
@@ -596,7 +596,7 @@
               <apply>
                 <times/>
                 <ci> k14f </ci>
-                <ci> pB_IFFL_combined1 </ci>
+                <ci> pB_IFFL_connected_with_X_P_P_DP2 </ci>
                 <ci> C4_IFFL </ci>
               </apply>
               <apply>
