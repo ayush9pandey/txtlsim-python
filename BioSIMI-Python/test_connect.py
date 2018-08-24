@@ -12,5 +12,6 @@ map['pB_IFFL'] = 'X:P:P_DP2'
 
 connected_sub = createNewSubsystem()
 connected_model = connected_sub.connectSubsystems([ss1,ss2,ss3], map, 'virtual',True,'constant',[50,50])
+# connected_model = connected_sub.combineSubsystems([ss1,ss2,ss3])
 
 writeSBML(connected_model, 'models/test_connect.xml')
