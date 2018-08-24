@@ -93,7 +93,7 @@
       <parameter id="k18f" name="k18f" value="1" units="per_second" constant="false"/>
     </listOfParameters>
     <listOfReactions>
-      <reaction id="r1_DP1" reversible="true" fast="false">
+      <reaction id="r1_DP1_combined" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="inP_combined" stoichiometry="1" constant="false"/>
           <speciesReference species="X_combined" stoichiometry="1" constant="false"/>
@@ -120,7 +120,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="r2_DP1" reversible="false" fast="false">
+      <reaction id="r2_DP1_combined" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference species="inP_X_combined" stoichiometry="1" constant="false"/>
         </listOfReactants>
@@ -138,7 +138,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="r3_DP1" reversible="true" fast="false">
+      <reaction id="r3_DP1_combined" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="E_combined" stoichiometry="1" constant="false"/>
           <speciesReference species="X_P_combined" stoichiometry="1" constant="false"/>
@@ -165,7 +165,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="r4_DP1" reversible="false" fast="false">
+      <reaction id="r4_DP1_combined" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference species="E_X_P_combined" stoichiometry="1" constant="false"/>
         </listOfReactants>
@@ -183,7 +183,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="r5_DP1" reversible="true" fast="false">
+      <reaction id="r5_DP1_combined" reversible="true" fast="false">
         <listOfReactants>
           <speciesReference species="inP_combined" stoichiometry="1" constant="false"/>
           <speciesReference species="X_P_combined" stoichiometry="1" constant="false"/>
@@ -255,7 +255,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="r8_DP1" reversible="false" fast="false">
+      <reaction id="r8_DP1_combined" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference species="E_X_P_P_combined" stoichiometry="1" constant="false"/>
         </listOfReactants>
