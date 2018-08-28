@@ -55,13 +55,13 @@ class SimpleReaction(object):
         '''
         return self.Reaction.getReversible()
 
-    def setReversible(self, bool):
+    def setReversible(self, bool_rev):
         '''
         Set reversible attribute of the Reaction and return the updated libSBML Reaction object 
         '''
-        if type(bool) is not bool:
+        if type(bool_rev) is not bool:
             raise ValueError('The argument should be boolean')
-        self.Reaction.setReversible(bool)
+        self.Reaction.setReversible(bool_rev)
         return self.Reaction
     
     def getFast(self):
@@ -70,13 +70,13 @@ class SimpleReaction(object):
         '''
         return self.Reaction.getFast()
     
-    def setFast(self, bool):
+    def setFast(self, bool_fast):
         '''
         Set fast attribute of the Reaction and return the updated libSBML Reaction object
         '''
-        if type(bool) is not bool:
+        if type(bool_fast) is not bool:
             raise ValueError('The argument should be boolean')
-        self.Reaction.setFast(bool)
+        self.Reaction.setFast(bool_fast)
         return self.Reaction
 
     def parseReactionString(self, rStr):

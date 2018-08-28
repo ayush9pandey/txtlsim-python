@@ -94,11 +94,11 @@ writeSBML(shared_subsystem,'models/DP_IFFL_shared.xml')
 # names need to be merged and False otherwise. 
 
 print('Creating combined model and writing it to SBML file')
-# combined_subsystem = createNewSubsystem()
-# combined_model = combined_subsystem.combineSubsystems([DP1, DP2, IFFL], 'volume', True)
+combined_subsystem = createNewSubsystem()
+combined_model = combined_subsystem.combineSubsystems([DP1, DP2, IFFL], 'volume', True)
 
 # (Optional) Write the combined document model to SBML file
-# writeSBML(combined_model,'models/DP_IFFL_combined.xml')
+writeSBML(combined_model,'models/DP_IFFL_combined.xml')
 
 # Now, for Example 1-C, the user needs to specify 
 # the map of the interaction modeling that is desired. This map uses species names.
@@ -107,8 +107,8 @@ print('Creating combined model and writing it to SBML file')
 # Two different species can be combined by defining the following map
 connection_logic = {}
 connection_logic['X:P:P'] = 'pA_IFFL'
-# DP2.renameSName('out','out_DP2')
-# connection_logic['out_DP2'] = 'pB_IFFL'
+DP2.renameSName('X:P:P','X:P:P_DP2')
+connection_logic['X:P:P_DP2'] = 'pB_IFFL'
 
 
 # Call connectInteraction function for the final subsystem object
@@ -116,7 +116,7 @@ connection_logic['X:P:P'] = 'pA_IFFL'
 # Usage - subsystem_object.self.connectSubsystems(ListOfSubsystems, connectionMap, mode, combineAllWithSameNames, amount)
 print('Creating connected model and writing  to SBML file')
 connected_subsystem = createNewSubsystem()
-connected_subsystem.connectSubsystems([DP1, DP2, IFFL], connection_logic, 'virtual', True, 'constant', 50)
+connected_subsystem.connectSubsystems([DP1, DP2, IFFL], connection_logic, 'virtual', True, 'constant', [50,50])
 
 # (Optional Utility Function) Set a new amount of a Species
 # Usage - setSpeciesAmount(self, species, amount)
@@ -133,6 +133,7 @@ timepoints = np.linspace(0,50,1000)
 
 # plotSbmlWithBioscrape('models/DP_IFFL_shared.xml',0,
 # plotSbmlWithBioscrape('models/DP_IFFL_combined.xml',0,
-# plotSbmlWithBioscrape('models/DP_IFFL_connected.xml',0,
+plotSbmlWithBioscrape('models/DP_IFFL_connected.xml',0,
 # timepoints,['inP','pA_IFFL','pB_IFFL','out_IFFL'],'Time',
-# 'Input and Output Species',14,14)
+timepoints,['inP','X:P:P','X:P:P_DP2','out_IFFL'],'Time',
+'Input and Output Species',14,14)
