@@ -18,7 +18,7 @@ cell.setExternal(external)
 cell.setMembrane(membrane)
 
 
-cell_model = cell.getModel()
+cell_model = cell.getModel('volume')
 
 cell_sub = Subsystem(cell_model)
 cell_sub.setSpeciesAmount('IPTG',0)
