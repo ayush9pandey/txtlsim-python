@@ -947,146 +947,116 @@ class Subsystem(object):
             final_species_hash_map = {}
             for subsystem in ListOfSubsystems:
                 sub_model = subsystem.getSBMLDocument().getModel()
-                # Finding duplicate species by name and compartment
-                species_hash_map = {}
-                for species in sub_model.getListOfSpecies():
-                    if not species.isSetName():
-                        warnings.warn('Species {0} does not have a name attribute. It may be duplicated.'.format(species.getId()))
-                        continue
-
-                    if species.getName() not in ListOfResources:
-                    # Maintain the dictionary for all species in the input subsystems by their name
-                        species_hash_map[species.getName()] = species
-                for species_name in species_hash_map:
-                    if final_species_hash_map.get(species_name):
-                        #If the final hash map already has that species then append to
-                        # the same instead of duplicating
-                        final_species_hash_map[species_name].append(
-                            species_hash_map[species_name])
-                    else:
-                        # For all the species in the dictionary not already in the final
-                        # hash map, save them to the final hash map dictionary.
-                        final_species_hash_map[species_name] = [
-                            species_hash_map[species_name]]
-                
+                for compartment in sub_model.getListOfCompartments():
+                    # Finding duplicate species by name and compartment
+                    species_hash_map = {}
+                    for species in sub_model.getListOfSpecies():
+                        if not species.isSetName():
+                            warnings.warn('Species {0} does not have a name attribute. It may be duplicated.'.format(species.getId()))
+                            continue
+                        if species.getCompartment() == compartment.getId():
+                            if species.getName() not in ListOfResources:
+                            # Maintain the dictionary for all species in the input subsystems by their name
+                                species_hash_map[species.getName()] = species
+                    for species_name in species_hash_map:
+                        if final_species_hash_map.get(species_name):
+                            #If the final hash map already has that species then append to
+                            # the same instead of duplicating
+                            final_species_hash_map[species_name].append(
+                                species_hash_map[species_name])
+                        else:
+                            # For all the species in the dictionary not already in the final
+                            # hash map, save them to the final hash map dictionary.
+                            final_species_hash_map[species_name] = [
+                                species_hash_map[species_name]]
+                       
             if mode == 'virtual':
                 # Removing duplicate species and adding only one
                 for unique_species_name in final_species_hash_map:
                     if len(final_species_hash_map[unique_species_name]) > 1: 
-                        flag = 0
                         comp_dict = {}
+                        uni_sp = final_species_hash_map[unique_species_name][0]
                         for species in final_species_hash_map[unique_species_name]:
-                            species_name = species.getName()
-                            if comp_dict.get(species_name):
-                                comp_dict[species_name].append(species.getCompartment())
-                            else:
-                                comp_dict[species_name] = [species.getCompartment()]
-                        for spe_id in comp_dict:
-                            if len(comp_dict[spe_id]) > 1:
-                                # multiple compartments for a species
-                                oldid = spe_id
-                                allids = self.getAllIds()
-                                trans = SetIdFromNames(allids)
-                                newid = trans.getValidIdForName(spe_id)
-                                self.renameSId(oldid, newid)
-                                flag = 1
-                        # we don't wa]nt these species to be combined
-                        if flag:
-                            continue
-
-                        # For any species with same name 
-                        # which were present in more than one subsystem
-                        
-                        uni_species = final_species_hash_map[unique_species_name][0]
-                        count = 0
-                        for i in final_species_hash_map[unique_species_name]:
-                            if i.isSetUnits():
-                                if i.getUnits() != uni_species.getUnits():
+                            if species.isSetUnits():
+                                if species.getUnits() != uni_sp.getUnits():
                                     warnings.warn('Species with same name have different units. They will not be combined. For {0} species id.'.format(i.getId()))
                                     break
-                            if i.getConstant() != uni_species.getConstant():
+                            if species.getConstant() != uni_sp.getConstant():
                                 warnings.warn('Species with same name have different constant attribute. They will not be combined. For {0} species id.'.format(i.getId()))
                                 break
-                            if i.getBoundaryCondition() != uni_species.getBoundaryCondition():
+                            if species.getBoundaryCondition() != uni_sp.getBoundaryCondition():
                                 warnings.warn('Species with same name have different boundary condition attribute. They will not be combined. For {0} species id.'.format(i.getId()))
                                 break
-                            model.addSpecies(i)
-                            oldid = i.getId()
-                            check(oldid, 'retreiving oldid combineSpecies')
-                            allids = self.getAllIds()
-                            trans = SetIdFromNames(allids)
-                            newid = trans.getValidIdForName(i.getName()) + '_combined'
-                            self.renameSId(oldid, newid)
-                            if count >= 1:
-                                check(model.removeSpecies(newid),'removing species in combineSpecies')
-                                warnings.warn('Removing duplicate species {0} from the combined model'.format(i.getName()))
-                            count += 1
+                            species_comp = species.getCompartment()
+                            if comp_dict.get(species_comp):
+                                comp_dict[species_comp].append(species)
+                            else:
+                                comp_dict[species_comp] = [species]
+                        for species_comp in comp_dict:
+                            if len(comp_dict[species_comp]) > 1:
+                                allids = self.getAllIds()
+                                trans = SetIdFromNames(allids)
+                                uni_sp = comp_dict[species_comp][0]
+                                count = 0
+                                for species in comp_dict[species_comp]:
+                                    #remove duplicates now
+                                    spe_id = species.getId()
+                                    cumulative_amount += species.getInitialAmount()
+                                    oldid = spe_id
+                                    check(oldid, 'retreiving oldid in combineSpecies else case, volume')
+                                    newid = trans.getValidIdForName(uni_sp.getId()) + '_combined'
+                                    self.renameSId(oldid, newid)
+                                    if count >= 1:
+                                        check(model.removeSpecies(newid),'removing duplicate species')
+                                        warnings.warn('Removing duplicate species {0} in the same compartment'.format(newid))
+                                    count += 1
             if mode == 'volume':
                 # Removing duplicate species in the same compartment
                 for unique_species_name in final_species_hash_map:
                     cumulative_amount = 0
                     if len(final_species_hash_map[unique_species_name]) > 1: 
-                        flag = 0 
                         comp_dict = {}
-                        for species in final_species_hash_map[unique_species_name]:
-                            species_name = species.getName()
-                            if comp_dict.get(species_name):
-                                comp_dict[species_name].append(species.getCompartment())
-                            else:
-                                comp_dict[species_name] = [species.getCompartment()]
-                        for spe_id in comp_dict:
-                            if len(comp_dict[spe_id]) > 1:
-                                # multiple compartments for a species
-                                oldid = spe_id
-                                allids = self.getAllIds()
-                                trans = SetIdFromNames(allids)
-                                newid = trans.getValidIdForName(spe_id)
-                                self.renameSId(oldid, newid)
-                                flag = 1
-
-                        if flag:
-                            continue
-                        
                         uni_sp = final_species_hash_map[unique_species_name][0]
-                        # For any species with same name 
-                        # which were present in more than one subsystem
-                        count = 0
-                        for i in final_species_hash_map[unique_species_name]:
-                            if i.isSetUnits():
-                                if i.getUnits() != uni_sp.getUnits():
+                        for species in final_species_hash_map[unique_species_name]:
+                            if species.isSetUnits():
+                                if species.getUnits() != uni_sp.getUnits():
                                     warnings.warn('Species with same name have different units. They will not be combined. For {0} species id.'.format(i.getId()))
                                     break
-                            if i.getConstant() != uni_sp.getConstant():
+                            if species.getConstant() != uni_sp.getConstant():
                                 warnings.warn('Species with same name have different constant attribute. They will not be combined. For {0} species id.'.format(i.getId()))
                                 break
-                            if i.getBoundaryCondition() != uni_sp.getBoundaryCondition():
+                            if species.getBoundaryCondition() != uni_sp.getBoundaryCondition():
                                 warnings.warn('Species with same name have different boundary condition attribute. They will not be combined. For {0} species id.'.format(i.getId()))
                                 break
-
-                            cumulative_amount += (model.getSpecies(i.getId()).getInitialAmount())
-                            oldid = i.getId()
-                            check(oldid, 'retreiving oldid combineSpecies')
-                            allids = self.getAllIds()
-                            trans = SetIdFromNames(allids)
-                            newid = trans.getValidIdForName(i.getName()) + '_combined'
-                            self.renameSId(oldid, newid)
-                            if count >= 1:
-                                check(model.removeSpecies(newid),'removing species in combineSpecies')
-                                warnings.warn('Removing duplicate species {0} from the combined model'.format(i.getName()))
-                            count += 1
-
-                        species_amount = cumulative_amount
-                        if uni_sp.isSetName():
-                            sp = simpleModel.getSpeciesByName(uni_sp.getName())
-                            if type(sp) is list: 
-                                for sp_i in sp:
-                                    check(sp_i.setInitialAmount(species_amount),'setting initial amount to cumulative in combineSubsystems')
+                            species_comp = species.getCompartment()
+                            if comp_dict.get(species_comp):
+                                comp_dict[species_comp].append(species)
                             else:
-                                check(sp.setInitialAmount(species_amount),'setting initial amount to cumulative in combineSubsystems')
-                        else:
-                            sp = model.getElementBySId(uni_sp.getId())
-                            check(sp.setInitialAmount(species_amount),'setting initial amount to cumulative in combineSubsystems')
-
+                                comp_dict[species_comp] = [species]
+                        for species_comp in comp_dict:
+                            if len(comp_dict[species_comp]) > 1:
+                                allids = self.getAllIds()
+                                trans = SetIdFromNames(allids)
+                                uni_sp = comp_dict[species_comp][0]
+                                count = 0
+                                cumulative_amount = 0
+                                for species in comp_dict[species_comp]:
+                                    #remove duplicates now
+                                    spe_id = species.getId()
+                                    cumulative_amount += species.getInitialAmount()
+                                    oldid = spe_id
+                                    check(oldid, 'retreiving oldid in combineSpecies else case, volume')
+                                    newid = trans.getValidIdForName(uni_sp.getId()) + '_combined'
+                                    self.renameSId(oldid, newid)
+                                    
+                                    if count >= 1:
+                                        check(model.removeSpecies(newid),'removing duplicate species')
+                                        warnings.warn('Removing duplicate species {0} in the same compartment'.format(newid))
+                                    else:
+                                        id_added_species = newid
+                                    count += 1
+                                check(model.getSpecies(id_added_species).setInitialAmount(cumulative_amount),'setting initial amount to cumulative in volume mode in combineSpecies else case')
+                                
         return self.getSBMLDocument()
 
     def combineParameters(self, ListOfSubsystems):
@@ -1613,40 +1583,143 @@ class Subsystem(object):
         return self.getSBMLDocument()
     
     
-    def setSpeciesAmount(self, inputSpecies, amount):
+    def getSpeciesByName(self, name):
+        ''' 
+        Returns a list of species in the Subsystem with the given name
+        '''
+        if type(name) is not str:
+            raise ValueError('The arguments are not of expected type.') 
+        model = self.getSBMLDocument().getModel()
+        check(model,'retreived model object')
+        species_found =[]
+        for species in model.getListOfSpecies():
+            if species.isSetName():
+                if species.getName() == name:
+                    species_found.append(species)
+            else:
+                warnings.warn('Species {0} does not have a name attribute, it will not be included in the list returned in this getSpeciesByName call.'.format(species.getId()))
+        if len(species_found) == 1:
+            return species_found[0] 
+        elif not species_found:
+            raise ValueError('The species ' + name + ' not found.')
+        else:
+            warnings.warn('Multiple species with name ' + name + ' found. Returning a list')
+            return species_found
+    
+    
+    def getCompartmentsByName(self, name):
+        ''' 
+        Returns a list of compartments in the Subsystem with the given name
+        '''
+        if type(name) is not str:
+            raise ValueError('The arguments are not of expected type.') 
+        model = self.getSBMLDocument().getModel()
+        check(model,'retreived model object')
+        compartment_found =[]
+        for compartment in model.getListOfCompartments():
+            if compartment.isSetName():
+                if compartment.getName() == name:
+                    compartment_found.append(compartment)
+            else:
+                warnings.warn('Compartment {0} does not have a name attribute. It will not be returned in the list returned in this getCompartmentsByName call.'.format(compartment.getId()))
+        if len(compartment_found) == 1:
+            return compartment_found[0] 
+        elif not compartment_found:
+            raise ValueError('The compartment ' + name + ' not found.')
+        else:
+            warnings.warn('Multiple compartments with name ' + name + ' found. Returning a list')
+            return compartment_found
+ 
+    def setSpeciesAmount(self, inputSpecies, amount, comp_name = ''):
         '''
         Sets amount of the species with the same name as inputSpecies argument equal to the amount argument
         Arguments may both be lists of same length.
         Returns the updated SBMLDocument object of this Subsystem.
         '''
-        model_obj = SimpleModel(self.getSBMLDocument().getModel())
-        if type(inputSpecies) is list:
-            for inp_sp in inputSpecies:
-                if type(inp_sp) is not str:
-                    raise ValueError('All items of inputSpecies must be strings.')
-                sp = model_obj.getSpeciesByName(inp_sp)
+        if comp_name == '':
+            if type(inputSpecies) is list:
+                for inp_sp in inputSpecies:
+                    if type(inp_sp) is not str:
+                        raise ValueError('All items of inputSpecies must be strings.')
+                    sp = self.getSpeciesByName(inp_sp)
+                    if type(sp) is list:
+                        for s_i in sp:
+                            if type(amount) is not float and type(amount) is not int:
+                                raise ValueError('The amount should be either a float or an int')
+                            check(s_i.setInitialAmount(amount),'setting initial amount to 0 in connectSubsystem')
+                    else:
+                        if type(amount) is not float and type(amount) is not int:
+                            raise ValueError('The amount should be either a float or an int')
+                        check(sp.setInitialAmount(amount),'setting initial amount')
+            else:
+                if type(inputSpecies) is not str:
+                    raise ValueError('inputSpecies argument must be a string or a list of strings.')
+                sp = self.getSpeciesByName(inputSpecies)
                 if type(sp) is list:
                     for s_i in sp:
                         if type(amount) is not float and type(amount) is not int:
                             raise ValueError('The amount should be either a float or an int')
-                        check(s_i.setInitialAmount(amount),'setting initial amount to 0 in connectSubsystem')
+                        check(s_i.setInitialAmount(amount),'setting initial amount')
                 else:
                     if type(amount) is not float and type(amount) is not int:
                         raise ValueError('The amount should be either a float or an int')
                     check(sp.setInitialAmount(amount),'setting initial amount')
         else:
-            if type(inputSpecies) is not str:
-                raise ValueError('inputSpecies argument must be a string or a list of strings.')
-            sp = model_obj.getSpeciesByName(inputSpecies)
-            if type(sp) is list:
-                for s_i in sp:
-                    if type(amount) is not float and type(amount) is not int:
-                        raise ValueError('The amount should be either a float or an int')
-                    check(s_i.setInitialAmount(amount),'setting initial amount')
+            model = self.getSBMLDocument().getModel()
+            comp = self.getCompartmentsByName(comp_name)
+            if type(comp) is not list: 
+                comp_name = comp.getId()
+                if type(inputSpecies) is str:
+                    if not isinstance(amount, (int, float)) or type(comp_name) is not str:
+                        raise ValueError('Amount argument must be int or float and comp_name argument must be string')
+                    species = self.getSpeciesByName(inputSpecies)
+                    if type(species) is not list:
+                        if species.getCompartment() == comp_name:
+                            check(species.setInitialAmount(amount), 'setting initial amount in setSpeciesAmount for single species case with compartment')
+                    elif type(species) is list:
+                        for sp in species:
+                            if sp.getCompartment() == comp_name:
+                                check(sp.setInitialAmount(amount), 'setting initial amount in setSpeciesAmount for single species case with compartment')
+                
+                elif type(inputSpecies) is list:
+                    if len(inputSpecies) != len(amount):
+                        raise ValueError('Length of species name list, amount list, and comp_name must be equal')
+                    for species in model.getListOfSpecies():
+                        for sp,am in zip(inputSpecies,amount):
+                            if type(sp) is not str or not isinstance(am, (float,int)) or type(comp_name) is not str:
+                                raise ValueError('inputSpecies list must have all string arguments, comp_name must have all string arguments, and amount list must have all float or int')
+                            if species.getName() == sp and species.getCompartment() == comp_name:
+                                check(sp.setInitialAmount(am),'setting initial amount in setSpeciesAmount list of species case with compartment')
+            elif type(comp) is list:
+                for c in comp:
+                    comp_name = c.getId()
+                    if type(inputSpecies) is str:
+                        if not isinstance(amount, (int, float)) or type(comp_name) is not str:
+                            raise ValueError('Amount argument must be int or float and comp_name argument must be string')
+                        species = self.getSpeciesByName(inputSpecies)
+                        if type(species) is not list:
+                            if species.getCompartment() == comp_name:
+                                check(species.setInitialAmount(amount), 'setting initial amount in setSpeciesAmount for single species case with compartment')
+                        elif type(species) is list:
+                            for sp in species:
+                                if sp.getCompartment() == comp_name:
+                                    check(species.setInitialAmount(amount), 'setting initial amount in setSpeciesAmount for single species case with compartment')
+                    
+                    elif type(inputSpecies) is list:
+                        if len(inputSpecies) != len(amount):
+                            raise ValueError('Length of species name list, amount list, and comp_name must be equal')
+                        for species in model.getListOfSpecies():
+                            for sp,am in zip(inputSpecies,amount):
+                                if type(sp) is not str or not isinstance(am, (float,int)) or type(comp_name) is not str:
+                                    raise ValueError('inputSpecies list must have all string arguments, comp_name must have all string arguments, and amount list must have all float or int')
+                                if species.getName() == sp and species.getCompartment() == comp_name:
+                                    check(sp.setInitialAmount(am),'setting initial amount in setSpeciesAmount list of species case with compartment')
             else:
-                if type(amount) is not float and type(amount) is not int:
-                    raise ValueError('The amount should be either a float or an int')
-                check(sp.setInitialAmount(amount),'setting initial amount')
+                raise ValueError('inputSpecies argument must be a string or a list of strings')
+
+
+
+
 
 
     def getFastReactions(self):
