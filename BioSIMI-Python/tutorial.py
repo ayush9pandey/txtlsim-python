@@ -39,7 +39,7 @@ DP1 = cell.createSubsystem('models/DP.xml','DP1')
 
 # (Optional) Rename the names of any species -
 # Usage - subsystem_object.renameSName(old_name, new_name)
-# DP1.renameSName('inp', 'input')
+# DP1.renameSName('inP', 'input')
 # renames 'inp' named species to 'input'
 
 # (Optional) Give a compartment to put the subsystem in. 
@@ -116,7 +116,7 @@ connection_logic['X:P:P_DP2'] = 'pB_IFFL'
 # Usage - subsystem_object.self.connectSubsystems(ListOfSubsystems, connectionMap, mode, combineAllWithSameNames, amount)
 print('Creating connected model and writing  to SBML file')
 connected_subsystem = createNewSubsystem()
-connected_subsystem.connectSubsystems([DP1, DP2, IFFL], connection_logic, 'virtual', True, 'constant', [50,50])
+connected_subsystem.connectSubsystems([DP1, DP2, IFFL], connection_logic, 'virtual', True, 'constant', [37,37])
 
 # (Optional Utility Function) Set a new amount of a Species
 # Usage - setSpeciesAmount(self, species, amount)
@@ -127,13 +127,13 @@ connected_subsystem.setSpeciesAmount('inp_IFFL',0)
 writeSBML(connected_subsystem.getSBMLDocument(),'models/DP_IFFL_connected.xml')
 
 # Simulate using bioscrape
-timepoints = np.linspace(0,50,1000)
+# timepoints = np.linspace(0,50,1000)
 # Usage - plotSbmlWithBioscrape(filename, initialTime, timepoints, 
 # ListOfSpeciesToPlot, xLabel, yLabel, xAxisSize, yAxisSize)
 
 # plotSbmlWithBioscrape('models/DP_IFFL_shared.xml',0,
 # plotSbmlWithBioscrape('models/DP_IFFL_combined.xml',0,
-plotSbmlWithBioscrape('models/DP_IFFL_connected.xml',0,
+# plotSbmlWithBioscrape('models/DP_IFFL_connected.xml',0,
 # timepoints,['inP','pA_IFFL','pB_IFFL','out_IFFL'],'Time',
-timepoints,['inP','X:P:P','X:P:P_DP2','out_IFFL'],'Time',
-'Input and Output Species',14,14)
+# timepoints,['inP','X:P:P','X:P:P_DP2','out_IFFL'],'Time',
+# 'Input and Output Species',14,14)
