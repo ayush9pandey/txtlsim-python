@@ -408,247 +408,40 @@ class Subsystem(object):
                 flag += 1
             if type(subsystem) is not Subsystem:
                 raise ValueError('All objects in ListOfSubsystems input argument list must be Subsystem objects')
-        if flag:
-            warnings.warn('Not all of the Subsystems being combined are in the same Compartment')
-
+ 
         # Merge all other components first and then add species 
         self.mergeSubsystemModels(ListOfSubsystems)
         model = self.getSBMLDocument().getModel()
         check(model,'retreiving model in shareSubsystems')
-        model_obj = SimpleModel(model)
         mod_id = ''
-        total_size = 0
         # combineCall is used to check whether the subsystems are being combined (coming from combineSubsystems(...))
         # or not. This changes the compartment size. For shared - the size is set as the total size of the System inside which the Subsystems are present.
         # whereas for a combineSubsystems call, the total size of the combined model is equal to the sum of the sizes of the compartments in the subsystems that are being combined.
-        if not combineCall:
-            total_size = self.getSystem().Size
-        else:
+ 
+        total_size = 0
+        if flag:
+            warnings.warn('Not all of the Subsystems being shared are in the same Compartment')
             for subsystem in ListOfSubsystems:
-                total_size += subsystem.getSBMLDocument().getModel().getCompartment(0).getSize()
+                mod = subsystem.getSBMLDocument().getModel()
+                mod_id += mod.getId()
+                total_size += mod.getCompartment(0).getSize()
+        elif not combineCall: 
+            total_size = self.getSystem().getSize()
+        else:
+            total_size = ListOfSubsystems[0].getSystem().getSize()
 
         check(model.getCompartment(0).setSize(total_size), 'setting compartment size in model')
-        final_species_hash_map = {}
-        if mode == 'volume':
-            # 'volume' mode combines species by setting their initial amounts
-            # dependent on the volume of the compartments they are placed in 
-            # and the inidividual initial amounts for all the species being combined 
-            for subsystem in ListOfSubsystems:
-                mod = subsystem.getSBMLDocument().getModel()
-                check(mod,'retreiving subsystem model in shareSubsystems')
-                mod_id += '_' + mod.getId()
-                # if list of shared resources is empty, add all species directly
-                if not ListOfSharedResources:
-                    species_list = mod.getListOfSpecies()
-                    check(species_list,'retreiving list of species of susbsytem model in shareSubsystems')
-                    for species in species_list:
-                        ssys_size = 0
-                        cumulative_amount = 0
-                        species_amount = 0
-                        ssys_size = species.getModel().getCompartment(0).getSize()
-                        cumulative_amount = (species.getInitialAmount())*ssys_size
-                        species_amount = cumulative_amount/total_size
-                        check(model.addSpecies(species),'adding species to the model when ListOfSharedResources is empty, in shareSubsystems')
-                        check(model.getSpecies(species.getId()).setInitialAmount(species_amount),'setting initial amount to cumulative in shareSubsystems')
-                else:
-                    species_hash_map = {}
-                    for species in mod.getListOfSpecies():
-                        ssys_size = 0
-                        cumulative_amount = 0
-                        species_amount = 0
-                        # species will only be combined if their name argument is same as the list of shared resources
-                        if species.isSetName():
-                            species_name = species.getName()
-                        else:
-                            warnings.warn('The species {0} does not have a name attribute. It might be duplicated.'.format(species.getId()))
-                            continue
-
-                        check(species_name,'getting species name in shareSubsystems')
-                        if species_name in ListOfSharedResources:
-                        # Maintain the dictionary for all species in the input subsystems by their name
-                            species_hash_map[species_name] = species
-                        else:
-                            ssys_size = species.getModel().getCompartment(0).getSize()
-                            cumulative_amount = (species.getInitialAmount())*ssys_size
-                            species_amount = cumulative_amount/total_size
-                            check(model.addSpecies(species),'adding species to the model in shareSubsystems')
-                            check(model.getSpecies(species.getId()).setInitialAmount(species_amount),'setting initial amount in shareSubsystems')
-                    for species_name in species_hash_map:
-                        if final_species_hash_map.get(species_name):
-                            #If the final hash map already has that species then append to
-                            # the same instead of duplicating
-                            final_species_hash_map[species_name].append(
-                                species_hash_map[species_name])
-                        else:
-                            # For all the species in the dictionary not already in the final
-                            # hash map, save them to the final hash map dictionary.
-                            final_species_hash_map[species_name] = [
-                                species_hash_map[species_name]]
-
-            # To find a valid id to a given name
-            allids = self.getAllIds()
-            trans = SetIdFromNames(allids)
-            for unique_species_name in final_species_hash_map:
-                ssys_size = 0
-                cumulative_amount = 0
-                species_amount = 0
-                if len(final_species_hash_map[unique_species_name]) > 1: 
-                    flag = 0
-                    comp_dict = {}
-                    for species in final_species_hash_map[unique_species_name]:
-                        # To combine species only when they are in the same compartment
-                        # when in different compartments, they will not be combined
-                        species_name = species.getName()
-                        if comp_dict.get(species_name):
-                            comp_dict[species_name].append(species.getCompartment())
-                        else:
-                            comp_dict[species_name] = [species.getCompartment()]
-                        
-                    for spe_id in comp_dict:
-                        if len(comp_dict[spe_id]) > 1:
-                            # Combine all that are in the same compartment
-                            # All the others with length = 1 will be ignored and not combined
-                            # But those in same compartment should be combined
-                            # multiple compartments for a species
-                            oldid = spe_id
-                            allids = self.getAllIds()
-                            trans = SetIdFromNames(allids)
-                            newid = trans.getValidIdForName(spe_id)
-                            self.renameSId(oldid, newid)
-                            flag = 1
-                    # we don't want this species to be combined
-                    if flag:
-                        continue
-
-                    uni_sp = final_species_hash_map[unique_species_name][0]
-                    # For any species with same name, as one of the species in the system's ListOfSharedResources
-                    # which were present in more than one subsystem and in the same compartment
-                    count = 0
-                    for i in final_species_hash_map[unique_species_name]:
-                        ssys_size = i.getModel().getCompartment(0).getSize()
-                        cumulative_amount += (i.getInitialAmount())*ssys_size
-                        species_amount = cumulative_amount/total_size
-                        check(model.addSpecies(i),'add species to model in shareSubsystems')
-                        oldid = i.getId()
-                        check(oldid,'getting olid in shareSubsystems')
-                        if i.isSetName():
-                            newid = trans.getValidIdForName(i.getName()) + '_shared'
-                        else:
-                            newid = trans.getValidIdForName(i.getId()) + '_shared'
-                        self.renameSId(oldid, newid)
-                        if count >= 1:
-                            check(model.removeSpecies(newid),'removing species from the model in shareSubsystems')
-                        count += 1
-                    if uni_sp.isSetName():
-                        sp = model_obj.getSpeciesByName(uni_sp.getName())
-                        if type(sp) is list: 
-                            for sp_i in sp:
-                                check(sp_i.setInitialAmount(species_amount),'setting initial amount to cumulative in shareSubsystems')
-                        else:
-                            check(sp.setInitialAmount(species_amount),'setting initial amount to cumulative in shareSubsystems')
-                    else:
-                        sp = model.getElementBySId(uni_sp.getId())
-                        check(sp.setInitialAmount(species_amount),'setting initial amount to cumulative in shareSubsystems')
-                else:
-                    # If there are no species with multiple occurence in different subsystems
-                    # then just add the list of all species maintained in the final hash map
-                    # to our new subsystem's list of species.
-                    i = final_species_hash_map[unique_species_name][0]
-                    check(model.addSpecies(i),'adding species to the model in shareSubsystems')
-        elif mode == 'virtual':
-            # 'virtual' mode combines species and assigns the species initial amount
-            # to be equal to the initial amount of the particular species in the first Subsystem in the ListOfSubsystems given as argument
-            # So, the first Subsystem in the list of subsystems should contain the correct initial amounts for all species and they are used.
-            for subsystem in ListOfSubsystems:
-                mod = subsystem.getSBMLDocument().getModel()
-                check(mod,'retreiving subsystem model in shareSubsystems')
-                mod_id += '_' + mod.getId()
-                if not ListOfSharedResources:
-                    species_list = mod.getListOfSpecies()
-                    check(species_list,'retreiving list of species of susbsytem model in shareSubsystems')
-                    for species in species_list:
-                        check(model.addSpecies(species),'adding species to the model when ListOfSharedResources is empty, in shareSubsystems')
-                else:
-                    species_hash_map = {}
-                    for species in mod.getListOfSpecies():
-                        if species.isSetName():
-                            species_name = species.getName() 
-                        else:
-                            warnings.warn('Species {0} name attribute is not set. It might be duplicated.'.format(species.getId()))
-                            continue
-
-                        check(species_name,'getting species name in shareSubsystems')
-                        if species_name in ListOfSharedResources:
-                            # Maintain the dictionary for all species in the input subsystems by their name
-                            species_hash_map[species_name] = species
-                        else:
-                            check(model.addSpecies(species),'adding species to the model in shareSubsystems')
-                    for species_name in species_hash_map:
-                        if final_species_hash_map.get(species_name):
-                            #If the final hash map already has that species then append to
-                            # the same instead of duplicating
-                            final_species_hash_map[species_name].append(
-                                species_hash_map[species_name])
-                        else:
-                            # For all the species in the dictionary not already in the final
-                            # hash map, save them to the final hash map dictionary.
-                            final_species_hash_map[species_name] = [
-                                species_hash_map[species_name]]
-
-            allids = self.getAllIds()
-            trans = SetIdFromNames(allids)
-            for unique_species_name in final_species_hash_map:
-                cumulative_amount = 0
-                if len(final_species_hash_map[unique_species_name]) > 1: 
-                    # For any species with same name 
-                    # which were present in more than one subsystem
-                    flag = 0
-                    comp_dict = {}
-                    for species in final_species_hash_map[unique_species_name]:
-                        species_name = species.getName()
-                        if comp_dict.get(species_name):
-                            comp_dict[species_name].append(species.getCompartment())
-                        else:
-                            comp_dict[species_name] = [species.getCompartment()]
-                        
-                    for spe_id in comp_dict:
-                        if len(comp_dict[spe_id]) > 1:
-                            # multiple compartments for a species
-                            oldid = spe_id
-                            allids = self.getAllIds()
-                            trans = SetIdFromNames(allids)
-                            newid = trans.getValidIdForName(spe_id)
-                            self.renameSId(oldid, newid)
-                            flag = 1
-                    # we don't want this species to be combined
-                    if flag:
-                        continue
-
-                    count = 0
-                    for i in final_species_hash_map[unique_species_name]:
-                        check(model.addSpecies(i),'add species to model in shareSubsystems')
-                        oldid = i.getId()
-                        check(oldid,'getting olid in shareSubsystems')
-                        if i.isSetName():
-                            newid = trans.getValidIdForName(i.getName()) + '_shared'
-                        else:
-                            newid = trans.getValidIdForName(i.getId()) + '_shared'
-                            
-                        self.renameSId(oldid, newid)
-                        if count >= 1:
-                            check(model.removeSpecies(newid),'removing species from the model in shareSubsystems')
-                        count += 1
-                else:
-                    # If there are no species with multiple occurence in different subsystems
-                    # then just add the list of all species maintained in the final hash map
-                    # to our new subsystem's list of species.
-                    i = final_species_hash_map[unique_species_name][0]
-                    check(model.addSpecies(i),'adding species to the model in shareSubsystems')
-
+        for subsystem in ListOfSubsystems:
+            subsystem.shareSubsystem(ListOfSharedResources, mode, combineCall)
+        self.shareSpecies(ListOfSubsystems, ListOfSharedResources, mode, combineCall)
+        check(model.getCompartment(0).setSize(total_size), 'setting compartment size in model')
         # Updating model id
         check(model.setId('shared_subsystems_' + mod_id),'setting new model id for shared model')
         return self.getSBMLDocument()
 
+    def shareSubsystem(self, ListOfSharedResources, mode = 'virtual', combineCall = False):
+        self.shareSpecies([], ListOfSharedResources, mode)        
+        return self.getSBMLDocument()
 
     def combineSubsystems(self, ListOfSubsystems, mode = 'virtual', combineNames = True):
         '''
@@ -684,60 +477,41 @@ class Subsystem(object):
             if type(subsystem) is not Subsystem:
                 raise ValueError('All objects in ListOfSubsystems input argument list should be of Subsystem class')
         if not flag:
-            ListOfResources = ListOfSubsystems[0].getSystem().ListOfSharedResources
+            sys = ListOfSubsystems[0].getSystem()
+            ListOfResources = sys.getListOfSharedResources()
+            total_size = sys.getSize()
         else:
             ListOfResources = []
             warnings.warn('Not all of the Subsystems being combined are in the same Compartment')
+            total_size = 0
+            for subsystem in ListOfSubsystems:
+                total_size += subsystem.getSBMLDocument().getModel().getCompartment(0).getSize()
 
-        # Combine each subsystem, to remove duplicate named components
-        for subsystem in ListOfSubsystems:
-            subsystem.combineSubsystem(ListOfResources, mode)
-        # Get the sharedSubsystem object to combine the species in ListOfSharedResources before combining all other species
-        self.shareSubsystems(ListOfSubsystems,ListOfResources, mode, True)
+        if not flag:
+            # Get the sharedSubsystem object to combine the species in ListOfSharedResources before combining all other species
+            self.shareSubsystems(ListOfSubsystems, ListOfResources, mode, True)
         model = self.getSBMLDocument().getModel()
         check(model,'retreiving model in combineSubsystems')
         mod_id = ''
-        if combineNames == False:
-            total_size = 0
-            for subsystem in ListOfSubsystems:
-                sub_model = subsystem.getSBMLDocument().getModel()
-                check(sub_model,'retreiving subsystem model in combineSubsystems')
-                mod_id += '_' + sub_model.getId()
-                total_size += sub_model.getCompartment(0).getSize()
-
-
+ 
+        check(model.getCompartment(0).setSize(total_size), 'setting compartment size in model')
+ 
+        # Combine each subsystem, to remove duplicate named components
+        for subsystem in ListOfSubsystems:
+            sub_model = subsystem.getSBMLDocument().getModel()
+            check(sub_model,'retreiving subsystem model in combineSubsystems')
+            mod_id += '_' + sub_model.getId()
+            subsystem.combineSubsystem(ListOfResources, mode)
         if combineNames == True:
-            if mode == 'volume':
-                total_size = 0
-                for subsystem in ListOfSubsystems:
-                    sub_model = subsystem.getSBMLDocument().getModel()
-                    total_size += sub_model.getCompartment(0).getSize()
-                    mod_id += '_' + sub_model.getId()
+            self.combineSpecies(ListOfSubsystems,ListOfResources, mode)
+            self.combineReactions(ListOfSubsystems)
+            self.combineCompartments(ListOfSubsystems)
+            self.combineParameters(ListOfSubsystems)
+            self.combineEvents(ListOfSubsystems)
+            self.combineFunctionDefinitions(ListOfSubsystems)
+            self.combineUnitDefinitions(ListOfSubsystems)
 
-                self.combineSpecies(ListOfSubsystems,ListOfResources, mode)
-                self.combineReactions(ListOfSubsystems)
-                self.combineCompartments(ListOfSubsystems)
-                self.combineParameters(ListOfSubsystems)
-                self.combineEvents(ListOfSubsystems)
-                self.combineFunctionDefinitions(ListOfSubsystems)
-                self.combineUnitDefinitions(ListOfSubsystems)
-                check(model.getCompartment(0).setSize(total_size), 'setting compartment size in model')
-            elif mode == 'virtual':
-                total_size = 0
-                for subsystem in ListOfSubsystems:
-                    sub_model = subsystem.getSBMLDocument().getModel()
-                    total_size += sub_model.getCompartment(0).getSize()
-                    mod_id += '_' + sub_model.getId()
-                    
-                self.combineSpecies(ListOfSubsystems,ListOfResources, mode)
-                self.combineReactions(ListOfSubsystems)
-                self.combineCompartments(ListOfSubsystems)
-                self.combineParameters(ListOfSubsystems)
-                self.combineEvents(ListOfSubsystems)
-                self.combineFunctionDefinitions(ListOfSubsystems)
-                self.combineUnitDefinitions(ListOfSubsystems)
-                check(model.getCompartment(0).setSize(total_size), 'setting compartment size in model')
-
+        check(model.getCompartment(0).setSize(total_size), 'setting compartment size in model')
         # Updating model id
         check(model.setId('combined_subsystems_' + mod_id),'setting new model id for shared model')
         return self.getSBMLDocument()
@@ -784,52 +558,212 @@ class Subsystem(object):
             if type(species2) is not list:
                 species2 = [species2]
             for species1,species2 in zip(species1,species2):
-                check(species2.setName(species_name),'updating name of species')
-                oldid = species2.getId()
-                newid = oldid + '_connected'
-                allids = self.getAllIds()
-                trans = SetIdFromNames(allids)
-                newid = trans.getValidIdForName(newid)
-                self.renameSId(oldid, newid)
-                oldid = species1.getId()
-                newid = oldid + '_connected'
-                newid = trans.getValidIdForName(newid)
-                self.renameSId(oldid, newid)    
-        # Combine the subsystem species
-        self.combineSpecies([], [], mode)
+                self.renameSName(species2.getName(), species_name)
 
         if len(connected_species_amount) != len(connectionMap.keys()):
             raise ValueError('The connected species amount list must have same length as the keys in connection map given')
 
         for species_name, amount in zip(connectionMap.keys(), connected_species_amount):
             species1 = simpleModel.getSpeciesByName(species_name)
-            if type(species1) is list:
-                raise ValueError('Something went wrong earlier. A list of species with the same name as given in the connection map was found')
-            check(species1.setInitialAmount(amount), 'setting connected species amount')
+            if type(species1) is not list:
+                species1 = [species1]
+            count = 0
             allids = self.getAllIds()
             trans = SetIdFromNames(allids)
-            oldid = species1.getId()
-            newid = trans.getValidIdForName(species_name) + '_connected_with_' + trans.getValidIdForName(connectionMap[species_name])
-            self.renameSId(oldid, newid)
+            for species in species1:
+                check(species.setInitialAmount(amount), 'setting connected species amount')
+                oldid = species.getId()
+                newid = trans.getValidIdForName(species_name) + '_connected_with_' + trans.getValidIdForName(connectionMap[species_name])
+                self.renameSId(oldid, newid, True)
+                if count >= 1:
+                    model.removeSpecies(species.getId())
+                count += 1
 
+        # self.combineSpecies([], [], mode)
         check(model.setId('connected_subsystems_' + model.getId()),'setting new model id for shared model')
         return self.getSBMLDocument()
 
+    def shareSpecies(self, ListOfSubsystems, ListOfResources, mode, combineCall = False):
+        model = self.getSBMLDocument().getModel()
+        if ListOfSubsystems == []:
+            if not ListOfResources:
+                for species in model.getListOfSpecies():
+                    check(model.addSpecies(species), 'adding species in shareSpecies if case when listofresources is empty')
+            else:
+                final_species_hash_map = {}
+                for compartment in model.getListOfCompartments():
+                    species_hash_map = {}
+                    for species in model.getListOfSpecies():
+                        if species_hash_map.get(species.getId()):
+                            raise ValueError('Multiple species with same identifier found. This is an invalid SBML.')
+                        if species.isSetName() and species.getCompartment() == compartment.getId() and species.getName() in ListOfResources:
+                            species_hash_map[species.getId()] = species.getName()
+                        # elif species.isSetName():
+                        #     check(model.addSpecies(species), 'adding species that are not in ListOfResources in shareSpecies if case')
+                        elif not species.isSetName():
+                            warnings.warn('Species {0} does not have a name attribute. It might be duplicated.'.format(species.getId()))
+                            continue
+                    for species_id, species_str in species_hash_map.items():
+                        if final_species_hash_map.get(species_str):
+                            final_species_hash_map[species_str].append(species_id)
+                        else:
+                            final_species_hash_map[species_str] = [species_id]
+
+                for unique_species_str in final_species_hash_map:
+                    if len(final_species_hash_map[unique_species_str]) > 1:
+                        comp_dict = {}
+                        uni_sp = model.getElementBySId(final_species_hash_map[unique_species_str][0])
+                        for species_id in final_species_hash_map[unique_species_str]:
+                            species = model.getElementBySId(species_id)
+                            check(species,'retreiving species by id in shareSpecies if case')
+                            if species.isSetUnits():
+                                if species.getUnits() != uni_sp.getUnits():
+                                    warnings.warn('Species with same name have different units. They will not be combined. For {0} species id.'.format(species.getId()))
+                                    break
+                            if species.getConstant() != uni_sp.getConstant():
+                                warnings.warn('Species with same name have different constant attribute. They will not be combined. For {0} species id.'.format(species.getId()))
+                                break
+                            if species.getBoundaryCondition() != uni_sp.getBoundaryCondition():
+                                warnings.warn('Species with same name have different boundary condition attribute. They will not be combined. For {0} species id.'.format(species.getId()))
+                                break
+                            species_comp = species.getCompartment()
+                            if comp_dict.get(species_comp):
+                                comp_dict[species_comp].append(species)
+                            else:
+                                comp_dict[species_comp] = [species]
+                        for species_comp in comp_dict:
+                            if len(comp_dict[species_comp]) > 1:
+                                # multiple compartments for a species
+                                allids = self.getAllIds()
+                                trans = SetIdFromNames(allids)
+                                uni_sp = comp_dict[species_comp][0]
+                                count = 0
+                                total_size = 0
+                                ssys_size = 0
+                                cumulative_amount = 0
+                                for species in comp_dict[species_comp]:
+                                    #remove duplicates
+                                    spe_id = species.getId()
+                                    mod = species.getModel()
+                                    ssys_size = mod.getElementBySId(species.getCompartment()).getSize()
+                                    cumulative_amount += species.getInitialAmount() * ssys_size
+                                    total_size += ssys_size 
+                                    oldid = spe_id
+                                    check(oldid, 'retreiving oldid in shareSpecies if case')
+                                    newid = trans.getValidIdForName(uni_sp.getId()) + '_shared'
+                                    self.renameSId(oldid, newid)
+                                    if count >= 1 :
+                                        check(model.removeSpecies(newid), 'removing duplicate species in shareSpecies if case')
+                                        warnings.warn('Removing duplicates of species {0} in the same compartment'.format(newid))
+                                        id_added_species = newid
+                                    count += 1
+                                if mode == 'volume':
+                                    check(model.getSpecies(id_added_species).setInitialAmount(cumulative_amount/total_size),'setting initial cumulative amount in combineSpecies if case in volume mode')
+        else:
+            final_species_hash_map = {}
+            total_size = model.getCompartment(0).getSize()
+            for subsystem in ListOfSubsystems:
+                sub_model = subsystem.getSBMLDocument().getModel()
+                if not ListOfResources:
+                    for species in model.getListOfSpecies():
+                        ssys_size = sub_model.getElementBySId(species.getCompartment()).getSize()
+                        cumulative_amount = (species.getInitialAmount())*ssys_size
+                        check(model.addSpecies(species), 'adding species to the model when ListOfResources is empty in else case of shareSpecies')
+                    if mode == 'volume':
+                        check(species.setInitialAmount(cumulative_amount/total_size), 'setting initial amount to cumulative amount in else case of shareSpecies, ListOfResources is empty')
+                else:
+                    for compartment in sub_model.getListOfCompartments():
+                        # Finding duplicate species by name and compartment
+                        species_hash_map = {}
+                        for species in sub_model.getListOfSpecies():
+                            if not species.isSetName():
+                                warnings.warn('Species {0} does not have a name attribute. It may be duplicated.'.format(species.getId()))
+                                continue
+                            elif species.getName() in ListOfResources and species.getCompartment() == compartment.getId():
+                                # Maintain the dictionary for all species in the input subsystems by their name
+                                species_hash_map[species.getName()] = species
+                            else:
+                                check(model.addSpecies(species), 'adding species not shared in shareSpecies else case')
+                                if mode == 'volume' and not combineCall:
+                                    mod = species.getModel()
+                                    cumulative_amount = (species.getInitialAmount()) * (mod.getElementBySId(species.getCompartment()).getSize())
+                                    check(species.setInitialAmount(cumulative_amount/total_size), 'setting initial amount to species not shared in shareSpecies in volume mode, in else case')
+                        for species_name in species_hash_map:
+                            if final_species_hash_map.get(species_name):
+                                #If the final hash map already has that species then append to
+                                # the same instead of duplicating
+                                final_species_hash_map[species_name].append(
+                                    species_hash_map[species_name])
+                            else:
+                                # For all the species in the dictionary not already in the final
+                                # hash map, save them to the final hash map dictionary.
+                                final_species_hash_map[species_name] = [
+                                    species_hash_map[species_name]]
+            # Removing duplicate species in the same compartment
+            for unique_species_name in final_species_hash_map:
+                if len(final_species_hash_map[unique_species_name]) > 1: 
+                    comp_dict = {}
+                    uni_sp = final_species_hash_map[unique_species_name][0]
+                    for species in final_species_hash_map[unique_species_name]:
+                        if species.isSetUnits():
+                            if species.getUnits() != uni_sp.getUnits():
+                                warnings.warn('Species with same name have different units. They will not be combined. For {0} species id.'.format(species.getId()))
+                                break
+                        if species.getConstant() != uni_sp.getConstant():
+                            warnings.warn('Species with same name have different constant attribute. They will not be combined. For {0} species id.'.format(species.getId()))
+                            break
+                        if species.getBoundaryCondition() != uni_sp.getBoundaryCondition():
+                            warnings.warn('Species with same name have different boundary condition attribute. They will not be combined. For {0} species id.'.format(species.getId()))
+                            break
+                        species_comp = species.getCompartment()
+                        if comp_dict.get(species_comp):
+                            comp_dict[species_comp].append(species)
+                        else:
+                            comp_dict[species_comp] = [species]
+                    for species_comp in comp_dict:
+                        if len(comp_dict[species_comp]) > 1:
+                            allids = self.getAllIds()
+                            trans = SetIdFromNames(allids)
+                            uni_sp = comp_dict[species_comp][0]
+                            count = 0
+                            cumulative_amount = 0
+                            ssys_size = 0
+                            total_size = 0
+                            for species in comp_dict[species_comp]:
+                                check(model.addSpecies(species),'adding species in shareSpecies else case')
+                                mod = species.getModel()
+                                ssys_size = mod.getElementBySId(species.getCompartment()).getSize()
+                                total_size += ssys_size
+                                #remove duplicates now
+                                cumulative_amount += (species.getInitialAmount()) * ssys_size
+                                spe_id = species.getId()
+                                oldid = spe_id
+                                check(oldid, 'retreiving oldid in combineSpecies else case, volume')
+                                newid = trans.getValidIdForName(uni_sp.getId()) + '_shared'
+                                self.renameSId(oldid, newid)
+                                if count >= 1:
+                                    check(model.removeSpecies(newid),'removing duplicate species')
+                                    warnings.warn('Removing duplicate species {0} in the same compartment'.format(newid))
+                                else:
+                                    id_added_species = newid
+                                count += 1
+                            if mode == 'volume':
+                                check(model.getSpecies(id_added_species).setInitialAmount(cumulative_amount/total_size),'setting initial amount to cumulative in volume mode in combineSpecies else case')
+        return self.getSBMLDocument()
+
+
     def combineSpecies(self, ListOfSubsystems, ListOfResources, mode):
         model = self.getSBMLDocument().getModel()
-        simpleModel = SimpleModel(model)
         if ListOfSubsystems == []:
-            model = self.getSBMLDocument().getModel()
-            simpleModel = SimpleModel(model)
-            if mode == 'virtual':
+            final_species_hash_map = {}
+            for compartment in model.getListOfCompartments():
                 species_hash_map = {}
-                final_species_hash_map = {}
                 for species in model.getListOfSpecies():
                     if species_hash_map.get(species.getId()):
                         raise ValueError('Multiple species with same identifier found. This is an invalid SBML.')
-                    if species.isSetName():
+                    if species.isSetName() and species.getCompartment() == compartment.getId() and species.getName() not in ListOfResources:
                         species_hash_map[species.getId()] = species.getName()
-                    else:
+                    elif not species.isSetName():
                         warnings.warn('Species {0} does not have a name attribute. It might be duplicated.'.format(species.getId()))
                         continue
                 for species_id, species_str in species_hash_map.items():
@@ -837,112 +771,58 @@ class Subsystem(object):
                         final_species_hash_map[species_str].append(species_id)
                     else:
                         final_species_hash_map[species_str] = [species_id]
-                for unique_species_str in final_species_hash_map:
-                    if len(final_species_hash_map[unique_species_str]) > 1:
-                        flag = 0
-                        comp_dict = {}
-                        for species_id in final_species_hash_map[unique_species_str]:
-                            species = model.getElementBySId(species_id)
-                            check(species,'retreiving species by id in combineSubsystem virtual')
-                            species_name = species.getName()
-                            if comp_dict.get(species_name):
-                                comp_dict[species_name].append(species.getCompartment())
-                            else:
-                                comp_dict[species_name] = [species.getCompartment()]
-                        for spe_id in comp_dict:
-                            if len(comp_dict[spe_id]) > 1:
-                                # multiple compartments for a species
-                                oldid = spe_id
-                                allids = self.getAllIds()
-                                trans = SetIdFromNames(allids)
-                                newid = trans.getValidIdForName(spe_id)
-                                self.renameSId(oldid, newid)
-                                flag = 1
-                        # we don't want these species to be combined
-                        if flag:
-                            continue
-                        
-                        # otherwise combine
-                        uni_sp = model.getElementBySId(final_species_hash_map[unique_species_str][0])
-                        count = 0
-                        allids = self.getAllIds()
-                        trans = SetIdFromNames(allids)
-                        newid = trans.getValidIdForName(uni_sp.getName()) + '_combined'
-                        for sp_id in final_species_hash_map[unique_species_str]:
-                            i = model.getElementBySId(sp_id)
-                            oldid = i.getId()
-                            check(oldid, 'retreiving oldid combineSubsystem')
-                            self.renameSId(oldid, newid)
-                            if count >= 1:
-                                check(model.removeSpecies(newid),'removing species in combineSubsystem')
-                            count += 1  
-            if mode == 'volume':
-                species_hash_map = {}
-                final_species_hash_map = {}
-                for species in model.getListOfSpecies():
-                    if species_hash_map.get(species.getId()):
-                        raise ValueError('Multiple species with same identifier found. This is an invalid SBML.')
-                    if species.isSetName():
-                        species_hash_map[species.getId()] = species.getName()
-                    else:
-                        warnings.warn('Species {0} does not have a name attribute. It might be duplicated.'.format(species.getId()))
-                        continue
 
-                for species_id, species_str in species_hash_map.items():
-                    if final_species_hash_map.get(species_str):
-                        final_species_hash_map[species_str].append(species_id)
-                    else:
-                        final_species_hash_map[species_str] = [species_id]
-                for unique_species_str in final_species_hash_map:
-                    cumulative_amount = 0
-                    if len(final_species_hash_map[unique_species_str]) > 1:
-                        flag = 0
-                        comp_dict = {}
-                        for species_id in final_species_hash_map[unique_species_str]:
-                            species = model.getElementBySId(species_id)
-                            check(species,'retreiving species by id in combineSubsystem virtual')
-                            species_name = species.getName()
-                            if comp_dict.get(species_name):
-                                comp_dict[species_name].append(species.getCompartment())
-                            else:
-                                comp_dict[species_name]= [species.getCompartment()]
-                        for spe_id in comp_dict:
-                            if len(comp_dict[spe_id]) > 1:
-                                # multiple compartments for a species
-                                oldid = spe_id
-                                allids = self.getAllIds()
-                                trans = SetIdFromNames(allids)
-                                newid = trans.getValidIdForName(spe_id)
-                                self.renameSId(oldid, newid)
-                                flag = 1
-                        # we don't want these species to be combined
-                        if flag:
-                            continue
-                        # otherwise combine                    
-                        uni_sp = model.getElementBySId(final_species_hash_map[unique_species_str][0])
-                        count = 0
-                        allids = self.getAllIds()
-                        trans = SetIdFromNames(allids)
-                        newid = trans.getValidIdForName(uni_sp.getName()) + '_combined'
-                        for sp_id in final_species_hash_map[unique_species_str]:
-                            i = model.getElementBySId(sp_id)
-                            cumulative_amount += (model.getSpecies(i.getId()).getInitialAmount())
-                            oldid = i.getId()
-                            check(oldid, 'retreiving oldid combineSubsystem')
-                            self.renameSId(oldid, newid)
-                            if count >= 1:
-                                check(model.removeSpecies(newid),'removing species in combineSubsystem')
-                                warnings.warn('Removing duplicate species {0} from the combined model'.format(i.getName()))
-                            count += 1  
-                        species_amount = cumulative_amount
-                        sp = simpleModel.getSpeciesByName(uni_sp.getName())
-                        if type(sp) is list: 
-                            for sp_i in sp:
-                                check(sp_i.setInitialAmount(species_amount),'setting initial amount to cumulative in combineSubsystem')
+            for unique_species_str in final_species_hash_map:
+                if len(final_species_hash_map[unique_species_str]) > 1:
+                    comp_dict = {}
+                    uni_sp = model.getElementBySId(final_species_hash_map[unique_species_str][0])
+                    for species_id in final_species_hash_map[unique_species_str]:
+                        species = model.getElementBySId(species_id)
+                        check(species,'retreiving species by id in combineSubsystem virtual')
+                        if species.isSetUnits():
+                            if species.getUnits() != uni_sp.getUnits():
+                                warnings.warn('Species with same name have different units. They will not be combined. For {0} species id.'.format(species.getId()))
+                                break
+                        if species.getConstant() != uni_sp.getConstant():
+                            warnings.warn('Species with same name have different constant attribute. They will not be combined. For {0} species id.'.format(species.getId()))
+                            break
+                        if species.getBoundaryCondition() != uni_sp.getBoundaryCondition():
+                            warnings.warn('Species with same name have different boundary condition attribute. They will not be combined. For {0} species id.'.format(species.getId()))
+                            break
+                        species_comp = species.getCompartment()
+                        if comp_dict.get(species_comp):
+                            comp_dict[species_comp].append(species)
                         else:
-                            check(sp.setInitialAmount(species_amount),'setting initial amount to cumulative in combineSubsystem')
-
-        
+                            comp_dict[species_comp] = [species]
+                    for species_comp in comp_dict:
+                        if len(comp_dict[species_comp]) > 1:
+                            # multiple compartments for a species
+                            allids = self.getAllIds()
+                            trans = SetIdFromNames(allids)
+                            uni_sp = comp_dict[species_comp][0]
+                            count = 0
+                            ssys_size = 0
+                            total_size = 0
+                            cumulative_amount = 0
+                            for species in comp_dict[species_comp]:
+                                #remove duplicates
+                                spe_id = species.getId()
+                                mod = species.getModel()
+                                ssys_size = mod.getElementBySId(species.getCompartment()).getSize()
+                                total_size += ssys_size 
+                                cumulative_amount += species.getInitialAmount() * ssys_size
+                                oldid = spe_id
+                                check(oldid, 'retreiving oldid in combineSpecies if case')
+                                newid = trans.getValidIdForName(uni_sp.getId()) + '_combined'
+                                self.renameSId(oldid, newid)
+                                if count >= 1 :
+                                    check(model.removeSpecies(newid), 'removing duplicate species in combineSpecies if case')
+                                    warnings.warn('Removing duplicates of species {0} in the same compartment'.format(newid))
+                                else:
+                                    id_added_species = newid
+                                count += 1
+                            if mode == 'volume':
+                                check(model.getSpecies(id_added_species).setInitialAmount(cumulative_amount/total_size),'setting initial cumulative amount in combineSpecies if case in volume mode')
         else:
             final_species_hash_map = {}
             for subsystem in ListOfSubsystems:
@@ -954,10 +834,9 @@ class Subsystem(object):
                         if not species.isSetName():
                             warnings.warn('Species {0} does not have a name attribute. It may be duplicated.'.format(species.getId()))
                             continue
-                        if species.getCompartment() == compartment.getId():
-                            if species.getName() not in ListOfResources:
+                        elif species.getCompartment() == compartment.getId() and species.getName() not in ListOfResources:
                             # Maintain the dictionary for all species in the input subsystems by their name
-                                species_hash_map[species.getName()] = species
+                            species_hash_map[species.getName()] = species
                     for species_name in species_hash_map:
                         if final_species_hash_map.get(species_name):
                             #If the final hash map already has that species then append to
@@ -969,94 +848,67 @@ class Subsystem(object):
                             # hash map, save them to the final hash map dictionary.
                             final_species_hash_map[species_name] = [
                                 species_hash_map[species_name]]
-                       
-            if mode == 'virtual':
-                # Removing duplicate species and adding only one
-                for unique_species_name in final_species_hash_map:
-                    if len(final_species_hash_map[unique_species_name]) > 1: 
-                        comp_dict = {}
-                        uni_sp = final_species_hash_map[unique_species_name][0]
-                        for species in final_species_hash_map[unique_species_name]:
-                            if species.isSetUnits():
-                                if species.getUnits() != uni_sp.getUnits():
-                                    warnings.warn('Species with same name have different units. They will not be combined. For {0} species id.'.format(i.getId()))
-                                    break
-                            if species.getConstant() != uni_sp.getConstant():
-                                warnings.warn('Species with same name have different constant attribute. They will not be combined. For {0} species id.'.format(i.getId()))
+            # Removing duplicate species in the same compartment
+            for unique_species_name in final_species_hash_map:
+                if len(final_species_hash_map[unique_species_name]) > 1: 
+                    comp_dict = {}
+                    uni_sp = final_species_hash_map[unique_species_name][0]
+                    for species in final_species_hash_map[unique_species_name]:
+                        if species.isSetUnits():
+                            if species.getUnits() != uni_sp.getUnits():
+                                warnings.warn('Species with same name have different units. They will not be combined. For {0} species id.'.format(species.getId()))
                                 break
-                            if species.getBoundaryCondition() != uni_sp.getBoundaryCondition():
-                                warnings.warn('Species with same name have different boundary condition attribute. They will not be combined. For {0} species id.'.format(i.getId()))
-                                break
-                            species_comp = species.getCompartment()
-                            if comp_dict.get(species_comp):
-                                comp_dict[species_comp].append(species)
-                            else:
-                                comp_dict[species_comp] = [species]
-                        for species_comp in comp_dict:
-                            if len(comp_dict[species_comp]) > 1:
-                                allids = self.getAllIds()
-                                trans = SetIdFromNames(allids)
-                                uni_sp = comp_dict[species_comp][0]
-                                count = 0
-                                for species in comp_dict[species_comp]:
-                                    #remove duplicates now
-                                    spe_id = species.getId()
-                                    cumulative_amount += species.getInitialAmount()
-                                    oldid = spe_id
-                                    check(oldid, 'retreiving oldid in combineSpecies else case, volume')
-                                    newid = trans.getValidIdForName(uni_sp.getId()) + '_combined'
-                                    self.renameSId(oldid, newid)
-                                    if count >= 1:
-                                        check(model.removeSpecies(newid),'removing duplicate species')
-                                        warnings.warn('Removing duplicate species {0} in the same compartment'.format(newid))
-                                    count += 1
-            if mode == 'volume':
-                # Removing duplicate species in the same compartment
-                for unique_species_name in final_species_hash_map:
-                    cumulative_amount = 0
-                    if len(final_species_hash_map[unique_species_name]) > 1: 
-                        comp_dict = {}
-                        uni_sp = final_species_hash_map[unique_species_name][0]
-                        for species in final_species_hash_map[unique_species_name]:
-                            if species.isSetUnits():
-                                if species.getUnits() != uni_sp.getUnits():
-                                    warnings.warn('Species with same name have different units. They will not be combined. For {0} species id.'.format(i.getId()))
-                                    break
-                            if species.getConstant() != uni_sp.getConstant():
-                                warnings.warn('Species with same name have different constant attribute. They will not be combined. For {0} species id.'.format(i.getId()))
-                                break
-                            if species.getBoundaryCondition() != uni_sp.getBoundaryCondition():
-                                warnings.warn('Species with same name have different boundary condition attribute. They will not be combined. For {0} species id.'.format(i.getId()))
-                                break
-                            species_comp = species.getCompartment()
-                            if comp_dict.get(species_comp):
-                                comp_dict[species_comp].append(species)
-                            else:
-                                comp_dict[species_comp] = [species]
-                        for species_comp in comp_dict:
-                            if len(comp_dict[species_comp]) > 1:
-                                allids = self.getAllIds()
-                                trans = SetIdFromNames(allids)
-                                uni_sp = comp_dict[species_comp][0]
-                                count = 0
-                                cumulative_amount = 0
-                                for species in comp_dict[species_comp]:
-                                    #remove duplicates now
-                                    spe_id = species.getId()
-                                    cumulative_amount += species.getInitialAmount()
-                                    oldid = spe_id
-                                    check(oldid, 'retreiving oldid in combineSpecies else case, volume')
-                                    newid = trans.getValidIdForName(uni_sp.getId()) + '_combined'
-                                    self.renameSId(oldid, newid)
-                                    
-                                    if count >= 1:
-                                        check(model.removeSpecies(newid),'removing duplicate species')
-                                        warnings.warn('Removing duplicate species {0} in the same compartment'.format(newid))
-                                    else:
-                                        id_added_species = newid
-                                    count += 1
-                                check(model.getSpecies(id_added_species).setInitialAmount(cumulative_amount),'setting initial amount to cumulative in volume mode in combineSpecies else case')
-                                
+                        if species.getConstant() != uni_sp.getConstant():
+                            warnings.warn('Species with same name have different constant attribute. They will not be combined. For {0} species id.'.format(species.getId()))
+                            break
+                        if species.getBoundaryCondition() != uni_sp.getBoundaryCondition():
+                            warnings.warn('Species with same name have different boundary condition attribute. They will not be combined. For {0} species id.'.format(species.getId()))
+                            break
+                        species_comp = species.getCompartment()
+                        if comp_dict.get(species_comp):
+                            comp_dict[species_comp].append(species)
+                        else:
+                            comp_dict[species_comp] = [species]
+                    for species_comp in comp_dict:
+                        if len(comp_dict[species_comp]) > 1:
+                            allids = self.getAllIds()
+                            trans = SetIdFromNames(allids)
+                            uni_sp = comp_dict[species_comp][0]
+                            count = 0
+                            cumulative_amount = 0
+                            ssys_size = 0 
+                            total_size = 0
+                            for species in comp_dict[species_comp]:
+                                #remove duplicates now
+                                spe_id = species.getId()
+                                mod = species.getModel()
+                                print(ssys_size)
+                                print(total_size)
+                                print(cumulative_amount)
+                                ssys_size = mod.getElementBySId(species.getCompartment()).getSize()
+                                total_size += ssys_size
+                                cumulative_amount += (species.getInitialAmount()) * ssys_size
+                                oldid = spe_id
+                                check(oldid, 'retreiving oldid in combineSpecies else case, volume')
+                                newid = trans.getValidIdForName(uni_sp.getId()) + '_combined'
+                                self.renameSId(oldid, newid)
+                                if count >= 1:
+                                    check(model.removeSpecies(newid),'removing duplicate species')
+                                    warnings.warn('Removing duplicate species {0} in the same compartment'.format(newid))
+                                else:
+                                    id_added_species = newid
+                                count += 1
+                            print(ssys_size)
+                            print(total_size)
+                            print(cumulative_amount)
+                            if mode == 'volume':
+                                check(model.getSpecies(id_added_species).setInitialAmount(cumulative_amount/total_size),'setting initial amount to cumulative in volume mode in combineSpecies else case')
+                # else:
+                #     # add cumulative amount for volume mode here (only needs to be done when combining inside a system)
+                #     for species in final_species_hash_map[unique_species_name]:
+                #         if mode == 'volume':
+                #             cumulative_amount = (species.getInitialAmount()) * (species.getModel().getCompartment(0).getSize())
+                #             check(species.setInitialAmount(cumulative_amount/total_size), 'setting amount to species in combineSpecies, volume mode, else case, species that are not combined')
         return self.getSBMLDocument()
 
     def combineParameters(self, ListOfSubsystems):

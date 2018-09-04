@@ -12,9 +12,9 @@ class System(object):
     By default, has two SBML Compratment objects attached to it
     internal and external. The models can be set using the different methods in this class
     '''
-    def __init__(self, SystemName, ListOfInternalSubsystems = [],
+    def __init__(self, SystemName, Size = 0, ListOfInternalSubsystems = [],
                 ListOfExternalSubsystems = [], ListOfMembraneSubsystems = [], 
-                Size = 0, ExternalSystemFlag = False):
+                ExternalSystemFlag = False):
         '''
         initialize lists of systems internal, external to the system.
         initialize the membrane subsystem that is attached to the system and its list of subsystem models
@@ -23,11 +23,11 @@ class System(object):
         all of these can be changed or retreived using appropriate methods available in the class
         '''
         self.SystemName = SystemName
+        self.Size = 0
         self.ListOfInternalSubsystems = []
         self.ListOfExternalSubsystems = []
         self.ListOfMembraneSubsystems = [] 
         self.ListOfSharedResources = []
-        self.Size = 0
         self.ExternalSystemFlag = False
         self.ExternalSystem = self
     
